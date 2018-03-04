@@ -9,20 +9,15 @@ import java.util.Observable;
 import java.util.Observer;
 import java.net.Socket;
 import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.NoSuchPaddingException;
-
-import java.util.*;
 
 /**
  *
@@ -35,108 +30,99 @@ public class User extends Observable implements Observer{
     private Color myColour;
     private InputThread Input;
     private Socket mySocket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private InputStream myIS;
+    private OutputStream myOS;
     private Collection<String> allowedCryptos;
-    private XMLConverter myConverter;
     
-    public User(Socket inSocket, String inName){
-        Name = inName;
+    public User(Socket inSocket){
+        Name = "nobody";
         myColour = Color.BLACK;
-        allowedCryptos = new ArrayList<>();
-        myConverter = new XMLConverter(this);
         mySocket = inSocket;
+        
+        
+        Encrypter myEncrypter = null;
+        myIS = null;
+        myOS = null;
         try {
+            myIS = mySocket.getInputStream();
+            myOS = mySocket.getOutputStream();
             myEncrypter = new Encrypter();
-            out = new PrintWriter(mySocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IOException ex) {
+        } catch (IOException | NoSuchPaddingException | NoSuchAlgorithmException ex) {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.sendMessage("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
           
     }
     
     
     public String convertToXML(Message message) {
-        return myConverter.MessageToXML(message);
+        return null;
     }
     
     public Message ReadXML( String Message ) {
-        return myConverter.StringToMessage(Message);
+        return null;
     }
     
-    public String asHex(byte[] buf){
-        return myEncrypter.asHex(buf);
-    }
     
     public void sendMessage( String Message ){
-        out.println(Message);
-    }
-    
-    public void addAllowedCrypto(String CryptoType){
-        if(!allowedCryptos.contains(CryptoType)){
-            allowedCryptos.add(CryptoType);
+        byte[] Envelope;
+        try {
+            Envelope = Message.getBytes("UTF-8");
+            myOS.write(Envelope);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
     
-    public boolean isAllowedCrypto(String CryptoType){
-        return allowedCryptos.contains(CryptoType);
+    public void addAllowedCrypto(String cryptotype){
+        allowedCryptos.add(cryptotype);
     }
     
-    public String getAllowedCrypto(){
-        String[] Cryptos = (String[])allowedCryptos.toArray();
-        if (Cryptos.length != 0){
-            return Cryptos[0];
-        }
-        else{
-            return "";
-        }
-    }
-    
-    public String[] encryptString( String Input ){
+    public String encryptString( String Input ){
         byte[] bytes = null;
-        String KeyString = null;
-        String Crypto = null;
         try {
             bytes = Input.getBytes("UTF-8");
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (allowedCryptos.size() == 0){
-            String[] returnStrings = {"", "", "***"};
-            return returnStrings;
+            return null;
         }
         else if(allowedCryptos.contains("Ceasar")){
             bytes = myEncrypter.ceasarEncrypt(bytes);
-            Crypto = "Ceasar";
-            KeyString = Encrypter.asHex(myEncrypter.getCeasarKey());
         }
         else if(allowedCryptos.contains("AES")){
             bytes = myEncrypter.aesEncrypt(bytes);
-            Crypto = "AES";
-            KeyString = Encrypter.asHex(myEncrypter.getAESKey());
         }
         else{
             return null;
         }
-        String[] returnStrings = {Crypto, KeyString, myEncrypter.asHex(bytes)};
-        return returnStrings;
+        return myEncrypter.asHex(bytes);
     }
     
-    public String decryptString( String Input, String CryptoType, String HexaKey){
+    public String decryptString( String Input, String HexaKey){
         byte[] bytes = null;
-        bytes = Encrypter.hexadecimalToBytes(Input);
-        if(CryptoType.equals("Ceasar")){
-            int key = (int) myEncrypter.hexadecimalToBytes(HexaKey)[0];
+        try {
+            bytes = Input.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (allowedCryptos.size() == 0){
+            return null;
+        }
+        else if(allowedCryptos.contains("Ceasar")){
+            int key = Integer.parseInt(HexaKey);
             bytes = myEncrypter.ceasarDecrypt(bytes, key);
         }
-        else if(CryptoType.equals("AES")){
+        else if(allowedCryptos.contains("AES")){
             byte[] key = myEncrypter.hexadecimalToBytes(HexaKey);
             bytes = myEncrypter.aesDecrypt(bytes, key);
         }
         else{
-            return Input;
+            return null;
         }
         try {
             return (new String(bytes, "UTF-8"));
@@ -146,11 +132,11 @@ public class User extends Observable implements Observer{
         return null;
     }
     
-    public void setName( String newName ){
+    public void changeName( String newName ){
         Name = newName;
     }
     
-    public void setColor( Color newColour ){
+    public void updateColor( Color newColour ){
         myColour = newColour;
     }
     

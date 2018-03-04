@@ -11,13 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.NoSuchPaddingException;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.ServerSocket;
-import java.lang.Thread;
-import java.net.InetAddress;
-
 /**
  *
  * @author lukasgu
@@ -34,51 +27,34 @@ public class Projektuppgift {
     public static void main(String[] args) {
         // TODO code application logic here
         
-          // testa encryptern
-//        Encrypter myEncrypter = null;
-//        try {
-//            myEncrypter = new Encrypter();
-//        } catch (NoSuchPaddingException ex) {
-//            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (NoSuchAlgorithmException ex) {
-//            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        View TheActualView = new View();
         
-
-
-        Server testServer = new Server(4444);
-        Thread testThread = new Thread(testServer);
-        testThread.start();
-        System.out.println("heya");
+        XMLConverter myConverter = new XMLConverter();
+        myConverter.newXMLToMessage("<message sender=\"Trasan Apansson\"><text color=\"#RRGGBB\"> haha du e  <mystic> lalala </mystic> rolig </text></message>");
+        
+//        "<data><employee><name>Trasan Apansson </name>"
+//        + "<title>Manager</title></employee>" + "<employee><name>Banarne </name>"
+//        + "<title>Software Developer</title></employee></data>"
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        // testa encryptern
+        Encrypter myEncrypter = null;
         try {
-            Socket testSocket = new Socket("130.237.226.37", 4444);
-                    
-                    
-                    
-                    
-          // Testa att konvertera till och från Message och XML-sträng
-        User testperson = new User(testSocket, "Hugo");
-        testperson.addAllowedCrypto("Ceasar");
-        XMLConverter myConverter = new XMLConverter(testperson);
+            myEncrypter = new Encrypter();
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        // try creating XMLO from message
-        String text = "del 1 krypkryp del2 encenc del3";
-        int[] indices = {6, 15, 21, 30};
-        Message trialmesage = new Message("Trasan", Color.BLUE, text, indices, true);
-
-        System.out.println("trialmessage har blivit till: " + myConverter.MessageToXML(trialmesage));
-
-
-        
-        Message testing = myConverter.StringToMessage(myConverter.MessageToXML(trialmesage));
-
-        System.out.println(testing.getText());
-        System.out.println(testing.isDisconnect());
-                    
-                    
-                    
-                
-                    
+     
 //         // testning hexadecimala talen
 //        String hexa = myEncrypter.stringToHexadecimal("Hello StackOverflow");
 //        System.out.println(hexa);
@@ -90,9 +66,9 @@ public class Projektuppgift {
 //        Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //        System.out.println(regular);
-                    
-                    
-                    
+
+            
+
 //        // test av ceasarkrypto
 //        
 //        String secret = "hej på dig idag!";
@@ -136,13 +112,7 @@ public class Projektuppgift {
 //        } catch (UnsupportedEncodingException ex) {
 //            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-                    
-                    
-                    
-                    } catch (IOException ex) {
-            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        
         
 
     }

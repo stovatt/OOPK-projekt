@@ -6,26 +6,22 @@
 package projektuppgift;
 
 import java.util.Observable;
-import java.util.Observer;
-import java.net.Socket;
 
 /**
  *
  * @author lukasgu
  */
-public class InputThread extends Observable implements Observer{
+public class KeyRequester extends Observable implements Runnable{
     
-    private Socket mySocket;
-    
-    public InputThread(){
+    public void run(){
         
     }
     
-    public void update( Observable o, Object arg){
-    
+    public void sendKeyRequest(User recipient, String cryptotype){
+        
     }
     
-    public void run(){
+    public void notifyObservers( Object arg ){
         
     }
     
