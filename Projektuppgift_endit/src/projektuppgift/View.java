@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class View extends Observable implements Observer, ActionListener{
     
-    private Model TheModel;
+    private Model theModel;
     private ChatModel ActiveChat;
     private JTextArea ChatHistory;
     private JTextArea MsgBox;
@@ -41,9 +41,9 @@ public class View extends Observable implements Observer, ActionListener{
     private Dimension PreferredSize;
     private JFrame TheWindow;
     
-    public View(){
+    public View(Model inModel){
         
-        //TheModel = inModel;
+        theModel = inModel;
         User me = this.getSettings();
         PreferredSize = new Dimension(1000, 800);
         this.draw();
@@ -52,52 +52,61 @@ public class View extends Observable implements Observer, ActionListener{
     public void draw(){
         
         TheWindow = new JFrame();
-        TheWindow.setLayout(new GridLayout(2,0));
-//        TheWindow.setPreferredSize(PreferredSize);
         TheWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        //The controlPanel makes sure everything is not stacked on top of eachother on the screen
-        JPanel controlPanel = new JPanel();
-        JPanel MsgPanel = new JPanel();
-//        controlPanel.add(MsgPanel);
+        // Chat history and chat control buttons
         
-        // Add textAreas
+        JTabbedPane historyPanels = new JTabbedPane();
+        
         ChatHistory = new JTextArea("chatHistory", 20, 30);
         ChatHistory.setEditable(false);
-//        ChatHistory.setBackground(Color.RED);
-        controlPanel.add(ChatHistory);
-        
-        MsgBox = new JTextArea("write here...", 8, 25);
-        MsgBox.setEditable(true);
-//        MsgBox.setBackground(Color.RED);
-        MsgPanel.add(MsgBox);
-        TheWindow.getContentPane().add(controlPanel, BorderLayout.NORTH);
-        TheWindow.getContentPane().add(MsgPanel, BorderLayout.SOUTH);
-        
-        // Add buttons with listeners
-        
-        SendMsgBtn = new JButton("Send Message");
-        SendAndEncryptBtn = new JButton("Send+Encrypt Message");
-        SendFileBtn = new JButton("Send File");
-        JPanel MsgButtonPanel = new JPanel();
-        
-        MsgButtonPanel.setLayout(new GridLayout(0,1));
-        MsgButtonPanel.add(SendMsgBtn);
-        MsgButtonPanel.add(SendAndEncryptBtn);
-        MsgButtonPanel.add(SendFileBtn);
-        MsgPanel.add(MsgButtonPanel);
-        
+        JScrollPane chatPanel = new JScrollPane(ChatHistory);
+        JScrollPane chatPanel2 = new JScrollPane();
+        historyPanels.addTab("Chat 1", null, chatPanel,
+                  "Does nothing");
+        historyPanels.addTab("Chat 2", null, chatPanel2,
+                  "Does nothing");
+
         NewChatBtn = new JButton("Start new chat");
         PersonalSettingsBtn = new JButton("Open settings");
         kickButton = new JButton("Kick from chat");
-        JPanel controlButtonPanel = new JPanel();
+        SendFileBtn = new JButton("Send File");
         
+        JPanel controlButtonPanel = new JPanel();
         controlButtonPanel.setLayout(new GridLayout(0,1));
         
         controlButtonPanel.add(NewChatBtn);
         controlButtonPanel.add(PersonalSettingsBtn);
         controlButtonPanel.add(kickButton);
-        controlPanel.add(controlButtonPanel);
+        controlButtonPanel.add(SendFileBtn);
+        
+        JSplitPane controlPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                           historyPanels, controlButtonPanel);
+        
+//        controlPanel.add(controlButtonPanel);
+        
+        //Buttons and textfields for sending messages
+        
+        MsgBox = new JTextArea("", 8, 35);
+        MsgBox.setEditable(true);
+        JPanel MsgPanel = new JPanel();
+        MsgPanel.add(MsgBox);
+        JTabbedPane msgTabbedPanel = new JTabbedPane();
+        msgTabbedPanel.addTab("Write here", null, MsgPanel,
+                                    "This is a tab, but it looks ok.");
+        
+        SendMsgBtn = new JButton("Send Message");
+        SendAndEncryptBtn = new JButton("Send+Encrypt Message");
+        JPanel MsgButtonPanel = new JPanel();
+        
+        MsgButtonPanel.setLayout(new GridLayout(0,1));
+        MsgButtonPanel.add(SendMsgBtn);
+        MsgButtonPanel.add(SendAndEncryptBtn);
+        
+        JSplitPane msgSplitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                           msgTabbedPanel, MsgButtonPanel);
+        
+        // Add listeners to buttons
         
         SendMsgBtn.addActionListener(this) ;
         SendAndEncryptBtn.addActionListener(this) ;
@@ -106,7 +115,11 @@ public class View extends Observable implements Observer, ActionListener{
         PersonalSettingsBtn.addActionListener(this) ;
         kickButton.addActionListener(this) ;
         
+        // Put together, pack and set visible
         
+        JSplitPane theSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                           controlPanel, msgSplitPanel);
+        TheWindow.getContentPane().add(theSplitPane);
         TheWindow.pack();
         TheWindow.setVisible(true);
     }
@@ -209,6 +222,11 @@ public class View extends Observable implements Observer, ActionListener{
                 updateChatHistory((Message)arg);
             }
         }
+        if(o == theModel){
+            if(arg instanceof ChatModel){
+                changeActiveChat(arg);
+            }
+        }
     }
     
     public void notifyObservers(Object arg){
@@ -234,6 +252,6 @@ public class View extends Observable implements Observer, ActionListener{
     public void updateChatHistory(Message newMessage){
         
         
-    }   
+    }
     
 }
