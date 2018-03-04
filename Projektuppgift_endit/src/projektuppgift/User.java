@@ -53,16 +53,16 @@ public class User extends Observable implements Observer{
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | IOException ex) {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.sendMessage("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
+        this.sendString("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
           
     }
     
     
-    public String convertToXML(Message message) {
+    public String convertToXML(Message message){
         return myConverter.MessageToXML(message);
     }
     
-    public Message ReadXML( String Message ) {
+    public Message ReadXML( String Message ){
         return myConverter.StringToMessage(Message);
     }
     
@@ -70,7 +70,12 @@ public class User extends Observable implements Observer{
         return myEncrypter.asHex(buf);
     }
     
-    public void sendMessage( String Message ){
+    public void sendMessage(Message inMessage){
+        String Strang = this.convertToXML(inMessage);
+        this.sendString(Strang);
+    }
+    
+    public void sendString( String Message ){
         out.println(Message);
     }
     
@@ -98,6 +103,8 @@ public class User extends Observable implements Observer{
         byte[] bytes = null;
         String KeyString = null;
         String Crypto = null;
+        
+        // Take the inputString, check what cryptos the User allows and then encrypt with that crypto
         try {
             bytes = Input.getBytes("UTF-8");
         } catch (UnsupportedEncodingException ex) {
@@ -120,6 +127,9 @@ public class User extends Observable implements Observer{
         else{
             return null;
         }
+        
+        // return the type of crypto, the key used and the encrypted message
+        
         String[] returnStrings = {Crypto, KeyString, myEncrypter.asHex(bytes)};
         return returnStrings;
     }
@@ -127,6 +137,9 @@ public class User extends Observable implements Observer{
     public String decryptString( String Input, String CryptoType, String HexaKey){
         byte[] bytes = null;
         bytes = Encrypter.hexadecimalToBytes(Input);
+        
+        // check if the specified cryptotype is supported and if so decrypt
+        
         if(CryptoType.equals("Ceasar")){
             int key = (int) myEncrypter.hexadecimalToBytes(HexaKey)[0];
             bytes = myEncrypter.ceasarDecrypt(bytes, key);
@@ -175,10 +188,6 @@ public class User extends Observable implements Observer{
             
             notifyObservers(rawXML);
         }
-    }
-    
-    public void notifyObservers( Object arg ){
-        
     }
     
 }
