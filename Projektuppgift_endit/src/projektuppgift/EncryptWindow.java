@@ -47,11 +47,11 @@ public class EncryptWindow implements ActionListener{
         
         textBox = new JTextPane();
         textBox.setText(msgText);
-//        textBox.setSize(200000, 100000);
         textBox.setBackground(Color.RED);
         textBox.setEditable(false);
         JScrollPane scrollBox = new JScrollPane(textBox);
-//        scrollBox.setSize(200000, 100000);
+        scrollBox.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollBox.setPreferredSize(new Dimension(300, 150));
         writePanel.add(scrollBox);
         
         JPanel btnPanel = new JPanel();
