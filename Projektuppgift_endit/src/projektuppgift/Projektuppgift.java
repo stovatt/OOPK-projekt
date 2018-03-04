@@ -43,15 +43,16 @@ public class Projektuppgift {
 //        } catch (NoSuchAlgorithmException ex) {
 //            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        
 
+        Projektuppgift theProject = new Projektuppgift();
+        
 
         Server testServer = new Server(4444);
         Thread testThread = new Thread(testServer);
         testThread.start();
         System.out.println("heya");
         try {
-            Socket testSocket = new Socket("130.237.226.37", 4444);
+            Socket testSocket = new Socket("2001:6b0:1:1041:5133:e920:9185:b5f6", 4444);
                     
                     
                     
@@ -147,6 +148,11 @@ public class Projektuppgift {
 
     }
     
-    
+  public Projektuppgift(){
+      
+            myModel = new Model();
+            myView = new View();
+            myController = new Controller(myView, myModel);
+        }  
     
 }
