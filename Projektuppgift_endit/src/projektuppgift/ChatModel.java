@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.awt.Color;
 
 /**
  *
@@ -26,7 +27,7 @@ public class ChatModel extends Observable implements Observer{
     public ChatModel(User inMe, User Member, boolean Host ){
         me = inMe;
         Members = new ArrayList<>();
-        Members.add(Member);
+        this.addUser(Member);
         isHost = Host;
         Members = new ArrayList<>();   
     }
@@ -41,6 +42,8 @@ public class ChatModel extends Observable implements Observer{
     
     public void addUser(User inUser){
         Members.add(inUser);
+        int[] empty = {};
+        this.sendMsg(new Message("Server", Color.BLACK, "A new User has joined the Chat!", empty, false ));
     }
     
 //    public void inviteOtherUser(String IpAddress, int port){

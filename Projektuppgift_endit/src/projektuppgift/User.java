@@ -45,16 +45,17 @@ public class User extends Observable implements Observer{
         myColour = Color.BLACK;
         allowedCryptos = new ArrayList<>();
         myConverter = new XMLConverter(this);
-        mySocket = inSocket;
-        try {
-            myEncrypter = new Encrypter();
-            out = new PrintWriter(mySocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IOException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        this.sendString("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
-          
+        if(inSocket != null){
+            mySocket = inSocket;
+            try {
+                myEncrypter = new Encrypter();
+                out = new PrintWriter(mySocket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
+            } catch (NoSuchPaddingException | NoSuchAlgorithmException | IOException ex) {
+                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.sendString("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
+        }  
     }
     
     
@@ -62,8 +63,8 @@ public class User extends Observable implements Observer{
         return myConverter.MessageToXML(message);
     }
     
-    public Message ReadXML( String Message ){
-        return myConverter.StringToMessage(Message);
+    public Message ReadXML( String inMessage ){
+        return myConverter.StringToMessage(inMessage);
     }
     
     public String asHex(byte[] buf){
