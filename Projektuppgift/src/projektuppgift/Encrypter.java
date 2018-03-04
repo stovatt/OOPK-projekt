@@ -31,17 +31,27 @@ public class Encrypter {
     public Encrypter() throws NoSuchPaddingException, NoSuchAlgorithmException {
         CeasarKey = 5;
         
-        // Skapa nyckel   
+        // Create Key   
         KeyGenerator AESgen = KeyGenerator.getInstance("AES");
         AESgen.init(256);
-        AESkey = (SecretKeySpec)AESgen.generateKey();
-        // MyAESKey = AESkey.getEncoded();
 
-        // Skapa cipher objekt
+        // Create cipher object
         AEScipher = Cipher.getInstance("AES");
     }
     
-    public byte[] hexadecimalToBytes(String Input){
+    
+    public static String asHex(byte[] buf)
+    {
+        char[] chars = new char[2 * buf.length];
+        for (int i = 0; i < buf.length; ++i)
+        {
+            chars[2 * i] = HEX_CHARS[(buf[i] & 0xF0) >>> 4];
+            chars[2 * i + 1] = HEX_CHARS[buf[i] & 0x0F];
+        }
+        return new String(chars);
+    }
+    
+    public static byte[] hexadecimalToBytes(String Input){
         int len = Input.length();
         
         if(len % 2 != 0){
@@ -63,7 +73,7 @@ public class Encrypter {
         return bytes;
     }
     
-    public int hexaValue(char c){
+    public static int hexaValue(char c){
         return Character.getNumericValue(c);
     }
     
@@ -74,26 +84,6 @@ public class Encrypter {
         } catch(UnsupportedEncodingException e){         
         }
         return "";
-    }
-
-    public String asHex(byte[] buf)
-    {
-        char[] chars = new char[2 * buf.length];
-        for (int i = 0; i < buf.length; ++i)
-        {
-            chars[2 * i] = HEX_CHARS[(buf[i] & 0xF0) >>> 4];
-            chars[2 * i + 1] = HEX_CHARS[buf[i] & 0x0F];
-        }
-        return new String(chars);
-    }
-    
-    public byte[] Encrypt(byte[] inputBytes, int cryptotype) {
-        if(cryptotype == 0){
-            return ceasarEncrypt(inputBytes);
-        }
-        else{
-            return aesEncrypt(inputBytes);
-        }
     }
 
     
@@ -119,7 +109,7 @@ public class Encrypter {
     
     public byte[] aesEncrypt(byte[] inputBytes){
         try {
-            // Kryptera
+            // Encrypt
             AEScipher.init(Cipher.ENCRYPT_MODE, AESkey);
             return AEScipher.doFinal(inputBytes);
         
@@ -134,7 +124,7 @@ public class Encrypter {
     
     public byte[] aesDecrypt(byte[] inputBytes, byte[] key) {
         try {
-            // Avkryptera            
+            // Decrypt            
             SecretKeySpec decodeKey = new SecretKeySpec(key, "AES");
             AEScipher.init(Cipher.DECRYPT_MODE, decodeKey); 
             return AEScipher.doFinal(inputBytes);
@@ -146,11 +136,14 @@ public class Encrypter {
         return null;
     }
     
-    public int getCeasarKey(){
-         return CeasarKey;   
+    public byte[] getCeasarKey(){
+        
+        byte a = (byte)CeasarKey;   
+        byte[] bytes = {a};
+        return bytes;
     }
     
-    public byte[] getByteAESKey(){
+    public byte[] getAESKey(){
         return AESkey.getEncoded();    
     }
        

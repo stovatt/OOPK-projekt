@@ -17,9 +17,16 @@ public class Message {
     private Color TheColor;
     private String Text;
     private int[] EncryptIndices;
+    private boolean Disconnect;
+    private boolean ConnectionRequest;
     
-    public Message(){
-        
+    public Message(String inName, Color inColor, String inText, int[] Indices, boolean inDisconnect, boolean inConnectionRequest){
+        Name = inName;
+        TheColor = inColor;
+        Text = inText;
+        EncryptIndices = Indices;
+        Disconnect = inDisconnect;
+        ConnectionRequest = inConnectionRequest;
     }
     
     public String getName(){        
@@ -38,8 +45,20 @@ public class Message {
         return EncryptIndices;
     }
     
+    public boolean isDisconnect(){
+        return Disconnect;
+    }
+    
+    public boolean isConnectionRequest(){
+        return ConnectionRequest;
+    }
+    
     public void setText(String Input){
         Text = Input;
     }
     
+    public int[] getRGB(){
+        int[] output = {TheColor.getRed(), TheColor.getGreen(), TheColor.getBlue()};
+        return output;
+    }
 }
