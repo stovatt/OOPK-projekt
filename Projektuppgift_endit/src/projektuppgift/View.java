@@ -44,6 +44,7 @@ public class View extends Observable implements Observer, ActionListener{
     public View(){
         
         //TheModel = inModel;
+        User me = this.getSettings();
         PreferredSize = new Dimension(1000, 800);
         this.draw();
     }
@@ -52,7 +53,7 @@ public class View extends Observable implements Observer, ActionListener{
         
         TheWindow = new JFrame();
         TheWindow.setLayout(new GridLayout(2,0));
-        //TheWindow.setPreferredSize(PreferredSize);
+//        TheWindow.setPreferredSize(PreferredSize);
         TheWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //The controlPanel makes sure everything is not stacked on top of eachother on the screen
@@ -61,35 +62,42 @@ public class View extends Observable implements Observer, ActionListener{
 //        controlPanel.add(MsgPanel);
         
         // Add textAreas
-        ChatHistory = new JTextArea("chatHistory", 20, 20);
+        ChatHistory = new JTextArea("chatHistory", 20, 30);
         ChatHistory.setEditable(false);
-        ChatHistory.setBackground(Color.RED);
+//        ChatHistory.setBackground(Color.RED);
         controlPanel.add(ChatHistory);
         
-        MsgBox = new JTextArea("write here", 10, 20);
+        MsgBox = new JTextArea("write here...", 8, 25);
         MsgBox.setEditable(true);
-        MsgBox.setBackground(Color.RED);
+//        MsgBox.setBackground(Color.RED);
         MsgPanel.add(MsgBox);
         TheWindow.getContentPane().add(controlPanel, BorderLayout.NORTH);
-        TheWindow.getContentPane().add(MsgPanel, BorderLayout.NORTH);
+        TheWindow.getContentPane().add(MsgPanel, BorderLayout.SOUTH);
         
         // Add buttons with listeners
         
         SendMsgBtn = new JButton("Send Message");
         SendAndEncryptBtn = new JButton("Send+Encrypt Message");
         SendFileBtn = new JButton("Send File");
+        JPanel MsgButtonPanel = new JPanel();
         
-        MsgPanel.add(SendMsgBtn);
-        MsgPanel.add(SendAndEncryptBtn);
-        MsgPanel.add(SendFileBtn);
+        MsgButtonPanel.setLayout(new GridLayout(0,1));
+        MsgButtonPanel.add(SendMsgBtn);
+        MsgButtonPanel.add(SendAndEncryptBtn);
+        MsgButtonPanel.add(SendFileBtn);
+        MsgPanel.add(MsgButtonPanel);
         
         NewChatBtn = new JButton("Start new chat");
         PersonalSettingsBtn = new JButton("Open settings");
         kickButton = new JButton("Kick from chat");
+        JPanel controlButtonPanel = new JPanel();
         
-        controlPanel.add(NewChatBtn);
-        controlPanel.add(PersonalSettingsBtn);
-        controlPanel.add(kickButton);
+        controlButtonPanel.setLayout(new GridLayout(0,1));
+        
+        controlButtonPanel.add(NewChatBtn);
+        controlButtonPanel.add(PersonalSettingsBtn);
+        controlButtonPanel.add(kickButton);
+        controlPanel.add(controlButtonPanel);
         
         SendMsgBtn.addActionListener(this) ;
         SendAndEncryptBtn.addActionListener(this) ;
@@ -104,7 +112,7 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void changeActiveChat(ChatModel inModel){
-        
+        ActiveChat = inModel;
     }
     
     public void startNewChat(){
@@ -127,6 +135,15 @@ public class View extends Observable implements Observer, ActionListener{
         
     }
     
+    public User getSettings(){
+        
+        
+        
+        
+        User me = new User(null);
+        return(me);
+    }
+    
     public void changeColor(){
         
     }
@@ -143,26 +160,9 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public int[] getEncryptIndex(String msgText){
-        int[] a = {};
-        
-        JFrame encryptFrame = new JFrame();
-        encryptFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        encryptFrame.setPreferredSize(new Dimension(20, 30));
-        encryptFrame.setLayout(new GridLayout(2,0));
-        
-        JPanel writePanel = new JPanel();
-        JTextArea encryptBox = new JTextArea(msgText, 10, 20);
-        writePanel.add(encryptBox);
-        
-        JPanel btnPanel = new JPanel();
-        JButton selectBtn = new JButton("Select");
-        JButton finishBtn = new JButton("Finish");
-        btnPanel.add(selectBtn);
-        btnPanel.add(finishBtn);
-        
-        encryptFrame.getContentPane().add(writePanel, BorderLayout.NORTH);
-        encryptFrame.getContentPane().add(btnPanel, BorderLayout.SOUTH);
-        encryptFrame.setVisible(true);
+        EncryptWindow encWindow = new EncryptWindow(msgText);
+
+        int[] a = encWindow.getIndices();
         
         return a; 
     }
@@ -171,9 +171,28 @@ public class View extends Observable implements Observer, ActionListener{
         
     }
     
-    public int showConnectionRequestWindow(){
+    public int showConnectionRequestWindow(Message inMessage){
         
-        return 0;
+        int ans = 0;
+        
+        JFrame requestWindow =  new JFrame();
+        JTextPane msgBox = new JTextPane();
+        msgBox.setText(inMessage.getText());
+        msgBox.setEditable(false);
+        
+        JPanel buttonPanel = new JPanel();
+        JButton allowBtn = new JButton("Allow");
+        JButton denyBtn = new JButton("Deny");
+        buttonPanel.add(allowBtn);
+        buttonPanel.add(denyBtn);
+        
+        //Add components
+        requestWindow.getContentPane().add(msgBox);
+        requestWindow.add(buttonPanel);
+        
+        requestWindow.pack();
+        
+        return ans;
     }
     
     public void changeTab(){
@@ -204,7 +223,7 @@ public class View extends Observable implements Observer, ActionListener{
         else if(e.getSource() == SendAndEncryptBtn){
             String msgText = MsgBox.getText();
             int[] ind = getEncryptIndex(msgText);
-            sendMsg(ind);
+//            sendMsg(ind);
         }
     }
     
@@ -215,15 +234,6 @@ public class View extends Observable implements Observer, ActionListener{
     public void updateChatHistory(Message newMessage){
         
         
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    }   
     
 }
