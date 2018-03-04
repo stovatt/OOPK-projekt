@@ -25,7 +25,7 @@ import javax.swing.text.JTextComponent;
  *
  * @author sartov
  */
-public class EncryptWindow implements ActionListener{
+public class EncryptWindow extends Observable implements ActionListener{
     
     private JFrame encryptFrame;
     private JTextComponent textBox;
@@ -34,16 +34,14 @@ public class EncryptWindow implements ActionListener{
     private boolean finished = false;
     private ArrayList indices;
     
-    public EncryptWindow(String msgText){
+    public EncryptWindow(String msgText) {
         
         indices = new ArrayList();
         encryptFrame = new JFrame();
 //        encryptFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        encryptFrame.setPreferredSize(new Dimension(20, 30));
         encryptFrame.setLayout(new GridLayout(2,0));
         
         JPanel writePanel = new JPanel();
-//        writePanel.setSize(100000, 50000);
         
         textBox = new JTextPane();
         textBox.setText(msgText);
@@ -70,11 +68,6 @@ public class EncryptWindow implements ActionListener{
         encryptFrame.setVisible(true);
     }
     
-    public int[] getIndices(){
-        
-        return new int[] {};
-    }
-    
     public void actionPerformed(ActionEvent e){
         
         if(e.getActionCommand().equals("selectbutton")){
@@ -86,7 +79,16 @@ public class EncryptWindow implements ActionListener{
 //            textBox.setSelectedText(Color.GREEN);
         }
         else if(e.getActionCommand().equals("finishbutton")){
-            System.out.println(indices);
+            Object[] ind = indices.toArray();
+            int[] indices = new int[ind.length];
+            for(int i = 0; i < ind.length; i++){
+                indices[i] = (int)ind[i];
+            }
+
+            Arrays.sort(indices);
+            this.setChanged();
+            notifyObservers(indices);
+            encryptFrame.dispose();
         }
     }
 
