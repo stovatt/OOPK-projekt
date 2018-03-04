@@ -6,6 +6,7 @@
 package projektuppgift;
 
 import javax.swing.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -19,6 +20,7 @@ import java.net.URL;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.StyleConstants;
 
 /**
  *
@@ -28,7 +30,9 @@ public class View extends Observable implements Observer, ActionListener{
     
     private Model theModel;
     private ChatModel ActiveChat;
-    private JTextArea ChatHistory;
+    private ArrayList<ChatModel> chatList;
+    private JTabbedPane historyPanels;
+    private ArrayList<JTextPane> chatHistorys;
     private JTextArea MsgBox;
     private JButton NewChatBtn;
     private JButton PersonalSettingsBtn;
@@ -57,16 +61,20 @@ public class View extends Observable implements Observer, ActionListener{
         
         // Chat history and chat control buttons
         
-        JTabbedPane historyPanels = new JTabbedPane();
+        historyPanels = new JTabbedPane();
+        historyPanels.setPreferredSize(new Dimension(400, 200));
         
-        ChatHistory = new JTextArea("chatHistory", 20, 30);
-        ChatHistory.setEditable(false);
-        JScrollPane chatPanel = new JScrollPane(ChatHistory);
-        JScrollPane chatPanel2 = new JScrollPane();
-        historyPanels.addTab("Chat 1", null, chatPanel,
-                  "Does nothing");
-        historyPanels.addTab("Chat 2", null, chatPanel2,
-                  "Does nothing");
+        chatList = new ArrayList<>();
+        chatHistorys = new ArrayList<>();
+        
+//        chatHistory = new JTextArea("chatHistory", 20, 30);
+//        chatHistory.setEditable(false);
+//        JScrollPane chatPanel = new JScrollPane(chatHistory);
+//        JScrollPane chatPanel2 = new JScrollPane();
+//        historyPanels.addTab("Chat 1", null, chatPanel,
+//                  "Does nothing");
+//        historyPanels.addTab("Chat 2", null, chatPanel2,
+//                  "Does nothing");
 
         NewChatBtn = new JButton("Start new chat");
         PersonalSettingsBtn = new JButton("Open settings");
@@ -128,6 +136,7 @@ public class View extends Observable implements Observer, ActionListener{
     public void changeActiveChat(ChatModel inModel){
         System.out.println("Active chatt satt");
         ActiveChat = inModel;
+        ActiveChat.addObserver(this);
     }
     
     public void startNewChat(){
@@ -174,12 +183,9 @@ public class View extends Observable implements Observer, ActionListener{
         System.out.println(message);
     }
     
-    public int[] getEncryptIndex(String msgText){
+    public void askForEncryptIndex(String msgText){
         EncryptWindow encWindow = new EncryptWindow(msgText);
-
-        int[] a = encWindow.getIndices();
-        
-        return a; 
+        encWindow.addObserver(this);
     }
     
     public void ReceiveFileRequest(){
@@ -187,7 +193,7 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public int showConnectionRequestWindow(Message inMessage){
-        
+        System.out.println("Fick connection request");
         int ans = 0;
         
         JFrame requestWindow =  new JFrame();
@@ -219,15 +225,32 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void update(Observable o, Object arg){
+        System.out.println("medelanded kom fram till View");
         if(o == ActiveChat){
             if(arg instanceof Message){
-                updateChatHistory((Message)arg);
+                updateChatHistory((Message)arg, (ChatModel)o);
             }
         }
         if(o == theModel){
             if(arg instanceof ChatModel){
+                System.out.println(((ChatModel) arg).getMe().getName());
+                chatList.add((ChatModel)arg);
+                JTextPane chatHistory = new JTextPane();
+                //set size 20, 30
+                chatHistory.setEditable(false);
+                chatHistorys.add(chatHistory);
+                JScrollPane chatPanel = new JScrollPane(chatHistory);
+                int chatNo = chatList.size();
+                historyPanels.addTab("Chat " + chatNo, null, chatPanel,
+                  "Does nothing");
                 changeActiveChat((ChatModel)arg);
             }
+        }
+        if(o instanceof EncryptWindow){
+            int[] ind = (int[])arg;
+            sendMsg(ind);
+            System.out.println("hejehj");
+            System.out.println(ind);
         }
     }
     
@@ -243,8 +266,7 @@ public class View extends Observable implements Observer, ActionListener{
         }
         else if(e.getSource() == SendAndEncryptBtn){
             String msgText = MsgBox.getText();
-            int[] ind = getEncryptIndex(msgText);
-            sendMsg(ind);
+            askForEncryptIndex(msgText);
         }
     }
     
@@ -252,9 +274,22 @@ public class View extends Observable implements Observer, ActionListener{
 //        
 //    }
     
-    public void updateChatHistory(Message newMessage){
+    public void updateChatHistory(Message newMessage, ChatModel chat){
+        int index = chatList.indexOf(chat);
+        JTextPane activeChatHistory = chatHistorys.get(index);
+        Color color = newMessage.getColor();
+        String text = newMessage.getText();
+        String name = newMessage.getName();
         
+        StyledDocument doc = activeChatHistory.getStyledDocument();
+        Style style = doc.addStyle("textStyle", null);
+        StyleConstants.setForeground(style, color);
         
-    }
+        try
+        {
+            doc.insertString(doc.getLength(), "\n" + name + ": " + text ,doc.getStyle("textStyle"));
+        }
+        catch(Exception e) { System.out.println(e); }
+        }
     
 }
