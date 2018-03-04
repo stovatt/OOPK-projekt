@@ -41,6 +41,7 @@ public class View extends Observable implements Observer, ActionListener{
     private Dimension PreferredSize;
     private JFrame TheWindow;
     
+    
     public View(){
         
         //TheModel = inModel;
@@ -52,13 +53,13 @@ public class View extends Observable implements Observer, ActionListener{
         
         TheWindow = new JFrame();
         TheWindow.setLayout(new GridLayout(2,0));
-        //TheWindow.setPreferredSize(PreferredSize);
+        TheWindow.setPreferredSize(PreferredSize);
         TheWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         //The controlPanel makes sure everything is not stacked on top of eachother on the screen
         JPanel controlPanel = new JPanel();
         JPanel MsgPanel = new JPanel();
-//        controlPanel.add(MsgPanel);
+        //controlPanel.add(MsgPanel);
         
         // Add textAreas
         ChatHistory = new JTextArea("chatHistory", 20, 20);
@@ -131,31 +132,12 @@ public class View extends Observable implements Observer, ActionListener{
         
     }
     
-    public void sendMsg(Message message){
+    public void sendMsg(Message inMessage){
         
     }
     
-    public int[] getEncryptIndex(String msgText){
+    public int[] getEncryptIndex(){
         int[] a = {};
-        
-        JFrame encryptFrame = new JFrame();
-        encryptFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        encryptFrame.setPreferredSize(new Dimension(20, 30));
-        encryptFrame.setLayout(new GridLayout(2,0));
-        
-        JPanel writePanel = new JPanel();
-        JTextArea encryptBox = new JTextArea(msgText, 10, 20);
-        writePanel.add(encryptBox);
-        
-        JPanel btnPanel = new JPanel();
-        JButton selectBtn = new JButton("Select");
-        JButton finishBtn = new JButton("Finish");
-        btnPanel.add(selectBtn);
-        btnPanel.add(finishBtn);
-        
-        encryptFrame.getContentPane().add(writePanel, BorderLayout.NORTH);
-        encryptFrame.getContentPane().add(btnPanel, BorderLayout.SOUTH);
-        encryptFrame.setVisible(true);
         
         return a; 
     }
@@ -186,23 +168,7 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void actionPerformed(ActionEvent e){
-        if(e.getSource() == SendMsgBtn){
-            String msgText = MsgBox.getText();
-            System.out.println(msgText);
-            String name = "";
-            Color color = Color.RED;
-            int[] ind = {};
-            
-            
-//            Message message = new Message(name, color, msgText, ind, false);
-//            sendMsg(message);
-        }
-        else if(e.getSource() == SendAndEncryptBtn){
-            String msgText = MsgBox.getText();
-            int[] ind = getEncryptIndex(msgText);
-//            Message message = new Message(msgText);
-//            sendMsg(message);
-        }
+        
     }
     
     public void messageReceive(Message inMessage, ChatModel chat){

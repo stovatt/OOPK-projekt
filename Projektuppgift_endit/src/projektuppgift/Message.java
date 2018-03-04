@@ -17,9 +17,14 @@ public class Message {
     private Color TheColor;
     private String Text;
     private int[] EncryptIndices;
+    private boolean Disconnect;
     
-    public Message(){
-        
+    public Message(String inName, Color inColor, String inText, int[] Indices, boolean inDisconnect){
+        Name = inName;
+        TheColor = inColor;
+        Text = inText;
+        EncryptIndices = Indices;
+        Disconnect = inDisconnect;
     }
     
     public String getName(){        
@@ -38,8 +43,16 @@ public class Message {
         return EncryptIndices;
     }
     
+    public boolean isDisconnect(){
+        return Disconnect;
+    }
+    
     public void setText(String Input){
         Text = Input;
     }
     
+    public int[] getRGB(){
+        int[] output = {TheColor.getRed(), TheColor.getGreen(), TheColor.getBlue()};
+        return output;
+    }
 }

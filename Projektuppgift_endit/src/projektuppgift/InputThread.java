@@ -5,28 +5,48 @@
  */
 package projektuppgift;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Observable;
 import java.util.Observer;
-import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author lukasgu
  */
-public class InputThread extends Observable implements Observer{
+
+public class InputThread extends Observable{
     
-    private Socket mySocket;
+    private BufferedReader in;
+    private String TempString;
+    private String New;
     
-    public InputThread(){
-        
-    }
-    
-    public void update( Observable o, Object arg){
-    
+    public InputThread(BufferedReader inIn){
+        in = inIn;
+        TempString = "";
+        New = "";
     }
     
     public void run(){
-        
+        while(true){
+            try {
+                New = in.readLine();
+            } catch (IOException ex) {
+                Logger.getLogger(InputThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if(!New.equals("")){
+                if(New.indexOf("<message/>") == -1){
+                    TempString = TempString + New;
+                    New = "";
+                }
+                else if(!TempString.equals("")){
+                    this.notifyObservers(TempString);
+                    TempString = "";
+                } 
+            }
+        }
     }
-    
 }
