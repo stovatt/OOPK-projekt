@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * @author lukasgu
  */
 
-public class InputThread extends Observable{
+public class InputThread extends Observable implements Runnable{
     
     private BufferedReader in;
     private String TempString;
@@ -31,22 +31,30 @@ public class InputThread extends Observable{
     }
     
     public void run(){
+        
+        boolean request = true;
         while(true){
             try {
                 New = in.readLine();
             } catch (IOException ex) {
                 Logger.getLogger(InputThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if(!New.equals("")){
-                if(New.indexOf("<message/>") == -1){
-                    TempString = TempString + New;
-                    New = "";
+            // if it is a new message, reset tempString
+            if(!(New.equals(""))){
+                if(New.indexOf("<message>") != -1 ){
+                    TempString = New;
+                    request = false;
                 }
-                else if(!TempString.equals("")){
+                else{
+                    TempString = TempString + "\n"+ New;
+                }
+
+                if(TempString.indexOf("<message/>") == -1){
+                    this.setChanged();
                     this.notifyObservers(TempString);
-                    TempString = "";
-                } 
+                }
             }
+            
         }
     }
 }

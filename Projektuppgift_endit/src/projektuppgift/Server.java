@@ -31,15 +31,27 @@ public class Server extends Observable implements Runnable{
     }
     
     public void run(){
-        try {
-            Socket response = myServerSocket.accept();
-        } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        Socket proposerSocket = null;
+        int start = 0;
+        int end = 0;
+        while(true){
+            try {
+                proposerSocket = myServerSocket.accept();
+                this.setChanged();
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            
+            if(proposerSocket != null){
+                notifyObservers(proposerSocket);
+                proposerSocket = null; 
+            }
+                
         }
-    }
-    
-    public void  notifyObservers(Socket inSocket){
+        
         
     }
+    
     
 }

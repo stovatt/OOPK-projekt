@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.NoSuchPaddingException;
 
+
 import java.util.*;
 
 /**
@@ -39,22 +40,37 @@ public class User extends Observable implements Observer{
     private PrintWriter out;
     private Collection<String> allowedCryptos;
     private XMLConverter myConverter;
+    private boolean isApproved;
     
-    public User(Socket inSocket, String inName){
-        Name = inName;
+    public User(Socket inSocket){
+        Name = "?";
         myColour = Color.BLACK;
+        isApproved = false;
         allowedCryptos = new ArrayList<>();
         myConverter = new XMLConverter(this);
+        try {
+            myEncrypter = new Encrypter();
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         if(inSocket != null){
             mySocket = inSocket;
             try {
-                myEncrypter = new Encrypter();
                 out = new PrintWriter(mySocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
-            } catch (NoSuchPaddingException | NoSuchAlgorithmException | IOException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.sendString("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
+            // this.sendString("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
+            
+            Input = new InputThread(in);
+            Input.addObserver(this);
+            Thread InputThread = new Thread(Input);
+            InputThread.start();
         }  
     }
     
@@ -160,12 +176,30 @@ public class User extends Observable implements Observer{
         return null;
     }
     
+    public void kick(){
+        out.close(); 
+        try {
+            mySocket.close();
+            in.close();
+        } catch (IOException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void setName( String newName ){
         Name = newName;
     }
     
     public void setColor( Color newColour ){
         myColour = newColour;
+    }
+    
+    public void setIsApproved(){
+        isApproved= true;
+    }
+    
+    public boolean isApproved(){
+        return isApproved;
     }
     
     public String getName(){
@@ -177,17 +211,27 @@ public class User extends Observable implements Observer{
     }
     
     public void update( Observable o, Object arg){
+        this.setChanged();
         if(o instanceof InputThread){
-            byte[] data = (byte[]) arg;
-            String rawXML = null;
-            try {
-                // these bytes will be convertable to UTF-8
-                rawXML = new String(data, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            if(arg instanceof String){
+                String rawXML = (String) arg;
+                Message pureMessage = myConverter.StringToMessage(rawXML);
+                notifyObservers(pureMessage);
+            }
+            else{
+                // We might not need this block
+                byte[] data = (byte[]) arg;
+                String rawXML = null;
+                try {
+                    // these bytes will be convertable to UTF-8
+                    rawXML = new String(data, "UTF-8");
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                notifyObservers(rawXML); 
             }
             
-            notifyObservers(rawXML);
         }
     }
     

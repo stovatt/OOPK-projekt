@@ -29,7 +29,7 @@ public class ChatModel extends Observable implements Observer{
         Members = new ArrayList<>();
         this.addUser(Member);
         isHost = Host;
-        Members = new ArrayList<>();   
+        History = new ArrayList<>();   
     }
     
     public void runSetUp(){
@@ -42,8 +42,9 @@ public class ChatModel extends Observable implements Observer{
     
     public void addUser(User inUser){
         Members.add(inUser);
+        inUser.addObserver(this);
         int[] empty = {};
-        this.sendMsg(new Message("Server", Color.BLACK, "A new User has joined the Chat!", empty, false ));
+        //this.sendMsg(new Message("Server", Color.BLACK, "A new User has joined the Chat!", empty, false, false ));
     }
     
 //    public void inviteOtherUser(String IpAddress, int port){
@@ -61,9 +62,11 @@ public class ChatModel extends Observable implements Observer{
 //    }
         
     public void sendMsg(Message Output){
-        User[] List = (User[]) Members.toArray();
-        for(User Member: List){
-            Member.sendMessage(Output);
+        Object[] List = Members.toArray();
+        User tempUser = null;
+        for(Object Member: List){
+            tempUser = (User) Member; 
+            tempUser.sendMessage(Output);
         }
         this.updateChatHistory(Output);
     }
@@ -88,9 +91,10 @@ public class ChatModel extends Observable implements Observer{
     
     public void update( Observable o, Object arg ){
         if(o instanceof User && arg instanceof Message){
+            
             this.updateChatHistory((Message) arg);
         }
-        
+        notifyObservers();
     }
     
 }

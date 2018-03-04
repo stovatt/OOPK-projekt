@@ -62,11 +62,17 @@ public class XMLConverter {
             String[] Parts = new String[No_parts];
             String Text = input.getText();
             
-            Parts[0] = Text.substring(0, Indices[0]);
-            for(int i = 0; i< No_parts-2; i++){
-                Parts[i+1] = Text.substring(Indices[i], Indices[i+1]);
+            if(No_parts > 1){
+                Parts[0] = Text.substring(0, Indices[0]);
+                for(int i = 0; i< No_parts-2; i++){
+                    Parts[i+1] = Text.substring(Indices[i], Indices[i+1]);
+                }
+                Parts[No_parts-1] = Text.substring(Indices[No_parts-2]);
             }
-            Parts[No_parts-1] = Text.substring(Indices[No_parts-2]);
+            else{
+                Parts[0] = Text;
+            }
+
             
             
             // create root element "message"
@@ -88,8 +94,9 @@ public class XMLConverter {
             for(int i = 0; i < Parts.length; i++){
                 if(i%2 == 0) TextNode.appendChild(doc.createTextNode(Parts[i]));
                 else{
-                    String[] EncryptInfo = Owner.encryptString(Parts[i]);
+                    String[] EncryptInfo = Owner.encryptString(Parts[i]);   // Here there is a problem if the User has a null socket
                     Element EncryptedNode = doc.createElement("encrypted");
+                    System.out.println(Parts[i]);
                     EncryptedNode.setAttribute("type", EncryptInfo[0]);
                     EncryptedNode.setAttribute("key", EncryptInfo[1]);
                     EncryptedNode.appendChild(doc.createTextNode(EncryptInfo[2]));
@@ -97,11 +104,19 @@ public class XMLConverter {
                 }
             }
             
+            
             // Determine if it is a disconnect message
             
             if(input.isDisconnect()){
                 RootElement.appendChild(doc.createElement("disconnect"));
             }
+            
+            // Determine if it is a ConnectionRequest message
+            
+            if(input.isConnectionRequest()){
+                RootElement.appendChild(doc.createElement("request"));
+            }
+            
             
             // turn the doc into a string
             
@@ -192,13 +207,18 @@ public class XMLConverter {
         NodeList DisconnectTags = doc.getElementsByTagName("disconnect");
         Disconnect = DisconnectTags.getLength() != 0;
         
+        // Check if this is a connection request
+        boolean ConnectionRequest;
+        NodeList ConnectionRequestTags = doc.getElementsByTagName("request");
+        ConnectionRequest = ConnectionRequestTags.getLength() != 0;
+        
         // Check if the message contains a keyrequest, if so send an empty message encrypted with both AES and Ceasar
         NodeList KeyRequestTags = doc.getElementsByTagName("keyrequest");
         for(int i = 0; i < KeyRequestTags.getLength(); i++){
             Element Node = (Element) KeyRequestTags.item(i);
             Cryptotype = Node.getAttribute("type");
             if(Owner.isAllowedCrypto(Cryptotype)){
-                Owner.sendMessage("<message sender=\"Trasan\"> <encrypted type="+ Cryptotype +"></encrypted> </message>");
+                Owner.sendString("<message sender=\"Trasan\"> <encrypted type="+ Cryptotype +"></encrypted> </message>");
             }
             
         }
@@ -206,7 +226,7 @@ public class XMLConverter {
         // Create the output in form of an instance of the "Message" class. Disregard what parts were encrypted or not
         
         int[] dummy = {0,0};
-        return new Message(sender, TheColor, Text.getTextContent(), dummy, Disconnect);
+        return new Message(sender, TheColor, Text.getTextContent(), dummy, Disconnect, ConnectionRequest);
     }
     
     
