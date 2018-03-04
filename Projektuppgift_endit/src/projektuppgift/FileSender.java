@@ -35,7 +35,7 @@ public class FileSender extends Observable implements Runnable{
     }
     
     public void sendFileRequest(String Message, String Size){
-        Owner.sendMessage("<message sender=\"Trasan\"> <filerequest name=" + MyFile.getName() +" size=" + Size +">" + Message + "</filerequest> </message>");
+        Owner.sendString("<message sender=\"Trasan\"> <filerequest name=" + MyFile.getName() +" size=" + Size +">" + Message + "</filerequest> </message>");
     }
     
     public void SendFile(){
