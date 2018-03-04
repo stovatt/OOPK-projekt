@@ -47,34 +47,34 @@ public class Projektuppgift {
         Projektuppgift theProject = new Projektuppgift();
         
 
-        Server testServer = new Server(4444);
-        Thread testThread = new Thread(testServer);
-        testThread.start();
-        System.out.println("heya");
-        try {
-            Socket testSocket = new Socket("2001:6b0:1:1041:5133:e920:9185:b5f6", 4444);
-                    
-                    
-                    
-                    
-          // Testa att konvertera till och från Message och XML-sträng
-        User testperson = new User(testSocket, "Hugo");
-        testperson.addAllowedCrypto("Ceasar");
-        XMLConverter myConverter = new XMLConverter(testperson);
-        
-        // try creating XMLO from message
-        String text = "del 1 krypkryp del2 encenc del3";
-        int[] indices = {6, 15, 21, 30};
-        Message trialmesage = new Message("Trasan", Color.BLUE, text, indices, true);
-
-        System.out.println("trialmessage har blivit till: " + myConverter.MessageToXML(trialmesage));
-
-
-        
-        Message testing = myConverter.StringToMessage(myConverter.MessageToXML(trialmesage));
-
-        System.out.println(testing.getText());
-        System.out.println(testing.isDisconnect());
+//        Server testServer = new Server(4444);
+//        Thread testThread = new Thread(testServer);
+//        testThread.start();
+//        System.out.println("heya");
+//        try {
+//            Socket testSocket = new Socket("2001:6b0:1:1041:5133:e920:9185:b5f6", 4444);
+//                    
+//                    
+//                    
+//                    
+//          // Testa att konvertera till och från Message och XML-sträng
+//        User testperson = new User(testSocket);
+//        testperson.addAllowedCrypto("Ceasar");
+//        XMLConverter myConverter = new XMLConverter(testperson);
+//        
+//        // try creating XMLO from message
+//        String text = "del 1 krypkryp del2 encenc del3";
+//        int[] indices = {6, 15, 21, 30};
+//        Message trialmesage = new Message("Trasan", Color.BLUE, text, indices, true);
+//
+//        System.out.println("trialmessage har blivit till: " + myConverter.MessageToXML(trialmesage));
+//
+//
+//        
+//        Message testing = myConverter.StringToMessage(myConverter.MessageToXML(trialmesage));
+//
+//        System.out.println(testing.getText());
+//        System.out.println(testing.isDisconnect());
                     
                     
                     
@@ -138,11 +138,11 @@ public class Projektuppgift {
 //            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
 //        }
                     
-                    
-                    
-                    } catch (IOException ex) {
-            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//                    
+//                    
+//                    } catch (IOException ex) {
+//            Logger.getLogger(Projektuppgift.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         
 
@@ -151,8 +151,11 @@ public class Projektuppgift {
   public Projektuppgift(){
       
             myModel = new Model();
-            myView = new View();
+            myView = new View(myModel);
             myController = new Controller(myView, myModel);
+            
+//            Message firstMessage = new Message("Putte", Color.RED, "Hej, får jag vara med?");
+//            myView.showConnectionRequestWindow(firstMessage);
         }  
     
 }
