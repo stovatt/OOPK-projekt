@@ -131,8 +131,15 @@ public class View extends Observable implements Observer, ActionListener{
         
     }
     
-    public void sendMsg(Message message){
+    public void sendMsg(int[] ind){
+        String msgText = MsgBox.getText();
         
+        Color color = ActiveChat.getMe().getColor();
+        String name = ActiveChat.getMe().getName();    
+            
+        Message message = new Message(name, color, msgText, ind, false);
+        ActiveChat.sendMsg(message);
+        System.out.println(message);
     }
     
     public int[] getEncryptIndex(String msgText){
@@ -178,7 +185,11 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void update(Observable o, Object arg){
-        
+        if(o == ActiveChat){
+            if(arg instanceof Message){
+                updateChatHistory((Message)arg);
+            }
+        }
     }
     
     public void notifyObservers(Object arg){
@@ -187,25 +198,22 @@ public class View extends Observable implements Observer, ActionListener{
     
     public void actionPerformed(ActionEvent e){
         if(e.getSource() == SendMsgBtn){
-            String msgText = MsgBox.getText();
-            System.out.println(msgText);
-            String name = "";
-            Color color = Color.RED;
             int[] ind = {};
-            
-            
-//            Message message = new Message(name, color, msgText, ind, false);
-//            sendMsg(message);
+            sendMsg(ind);
         }
         else if(e.getSource() == SendAndEncryptBtn){
             String msgText = MsgBox.getText();
             int[] ind = getEncryptIndex(msgText);
-//            Message message = new Message(msgText);
-//            sendMsg(message);
+            sendMsg(ind);
         }
     }
     
-    public void messageReceive(Message inMessage, ChatModel chat){
+//    public void messageReceive(Message inMessage, ChatModel chat){
+//        
+//    }
+    
+    public void updateChatHistory(Message newMessage){
+        
         
     }
     
