@@ -47,6 +47,10 @@ public class View extends Observable implements Observer, ActionListener{
     private JFrame TheWindow;
     
     public View(){
+        
+        // Open a start window to enter bacis user info
+        // The start window will notify View which will trigger a call to
+        // the draw function
         StartWindow s = new StartWindow();
         s.addObserver(this);
     }
@@ -130,7 +134,6 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void changeActiveChat(ChatModel inModel){
-//        System.out.println("Active chatt satt");
         activeChat = inModel;
         activeChat.addObserver(this);
         
@@ -142,9 +145,9 @@ public class View extends Observable implements Observer, ActionListener{
         }
     }
     
-    public void startNewChat(){
-        
-    }
+//    public void startNewChat(){
+//        
+//    }
     
     public void connectToServer(){
         ConnectToServerWindow serverWindow = new ConnectToServerWindow();
@@ -170,7 +173,6 @@ public class View extends Observable implements Observer, ActionListener{
             
         Message message = new Message(name, color, msgText, ind, false, false);
         activeChat.sendMsg(message, theModel.getMe());
-//        System.out.println(message);
         
         msgBox.setText("");
     }
@@ -185,7 +187,6 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void showConnectionRequestWindow(Object[] list){
-        System.out.println("Fick connection request");
         
         int noChats = chatList.size();
         ConnectionRequestWindow CRWindow = new ConnectionRequestWindow(list, noChats);
@@ -203,19 +204,24 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void leave(){
-        System.out.println("leave början");
         if(activeChat != null){
-            System.out.println("leave aC != null");
+            
+            // Create a leave message to be sent to other users, most important
+            // is that the dissconnect boolean is set to true, this will
+            // lead to the message getting the dissconnect-tags
             String n = theModel.getMe().getName();
             Color c = theModel.getMe().getColor();
             int[] i = new int[] {};
             Message leaveM = new Message(n, c, "Hejdå", i, true, false);
             activeChat.sendMsg(leaveM, theModel.getMe());
 
+            // A message to be printed in your own chat history to show that
+            // you have left the chat
             Message tempM = new Message("Server", Color.BLACK,
                     "You have left this chat", i, false, false);
             updateChatHistory(tempM, activeChat);
             
+            // remove the chat
             int chatIndex = chatList.indexOf(activeChat);
             chatHistorys.remove(chatIndex);
             chatList.remove(chatIndex);
@@ -223,18 +229,18 @@ public class View extends Observable implements Observer, ActionListener{
             
         }
         
-        if(chatList.size() > 0){
+        if(chatList.size() > 0){      // there is another chat to set to active
             activeChat = chatList.get(0);
         }
         else{
-            activeChat = null;
+            activeChat = null;      // not other chats
         }
     }
     
     public int close(){
-        System.out.println("close, innan leave");
+        
         leave();
-        System.out.println("close, efter leave");
+        
         TheWindow.dispose();
         System.exit(0);
         
@@ -259,6 +265,9 @@ public class View extends Observable implements Observer, ActionListener{
     catch(Exception e) { System.out.println(e); }
     }
     
+    // Detects when the user changes tab and sets active chat to the one
+    // corresponding to the new tab
+    
     ChangeListener changeListener = new ChangeListener() {
         public void stateChanged(ChangeEvent changeEvent) {
             JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
@@ -268,34 +277,33 @@ public class View extends Observable implements Observer, ActionListener{
     };
     
     public void update(Observable o, Object arg){
-        if(o instanceof ChatModel){
+        if(o instanceof ChatModel){                 //A message was received
             if(arg instanceof Message){
                 Message message = (Message)arg;
-                if(message.isDisconnect()){
-                    message.setText(message.getName() + " har loggat ut");
-                    message.setName("Server");
-                }
-                else if(false){
+                if(message.getText().equals("")){
                     
                 }
-                updateChatHistory(message, (ChatModel)o);
-            }
+                else{
+                    if(message.isDisconnect()){
+                        message.setText(message.getName() + " har loggat ut");
+                        message.setName("Server");
+                    }
+                    updateChatHistory(message, (ChatModel)o);
+                }
+            }       
         }
         if(o == theModel){
-            if(arg instanceof ChatModel){
-//                System.out.println(((ChatModel) arg).getMe().getName());
+            if(arg instanceof ChatModel){       // A new chat is created
                 chatList.add((ChatModel)arg);
                 JTextPane chatHistory = new JTextPane();
-                //set size 20, 30
                 chatHistory.setEditable(false);
                 chatHistorys.add(chatHistory);
                 JScrollPane chatPanel = new JScrollPane(chatHistory);
                 int chatNo = chatList.size();
                 historyPanels.addTab("Chat " + chatNo, null, chatPanel,
                   "Does nothing");
-//                changeActiveChat((ChatModel)arg);
             }
-            else{
+            else{                       // Model sent connection request
                 Object[] newArg = (Object[])arg;
                 showConnectionRequestWindow(newArg);
             }
@@ -303,11 +311,9 @@ public class View extends Observable implements Observer, ActionListener{
         if(o instanceof EncryptWindow){
             int[] ind = (int[])arg;
             sendMsg(ind);
-//            System.out.println("hejehj");
             System.out.println(ind);
         }
         if(o instanceof StartWindow){
-            System.out.println("hej");
             Object[] newArg = (Object[])arg;
             int port = Integer.parseInt((String)newArg[1]);
             User me = (User)newArg[0];
@@ -339,7 +345,6 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void actionPerformed(ActionEvent e){
-//        System.out.println("Fick ae");
         if(e.getSource() == SendMsgBtn){
             int[] ind = {};
             sendMsg(ind);
