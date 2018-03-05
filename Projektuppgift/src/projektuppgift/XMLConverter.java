@@ -190,14 +190,19 @@ public class XMLConverter {
             NodeList EncryptedParts = doc.getElementsByTagName("encrypted");
             int No_EParts = EncryptedParts.getLength();
 
-            
+            String DecryptedText;
             for(int i = 0; i < No_EParts; i++){
                 ENode = (Element) EncryptedParts.item(i);
                 Cryptotype = ENode.getAttribute("type");
                 Owner.addAllowedCrypto(Cryptotype);                   // add that that one may send messages encrypted with this kind of crypto
                 CryptoKey = ENode.getAttribute("key");
                 String Encryptedtext = ENode.getTextContent();
-                String DecryptedText = Owner.decryptString(Encryptedtext, Cryptotype, CryptoKey) ;
+                if(Encryptedtext.equals("")){
+                    DecryptedText = Owner.decryptString(Encryptedtext, Cryptotype, CryptoKey) ;
+                }
+                else{
+                    DecryptedText = "";
+                }
                 ENode.setTextContent(DecryptedText);
             }
             
@@ -230,8 +235,11 @@ public class XMLConverter {
             Cryptotype = Node.getAttribute("type");
             Owner.addAllowedCrypto(Cryptotype);
             if(Owner.isAllowedCrypto(Cryptotype)){
-                byte[] key = Owner.getKey(Cryptotype);
-                Owner.sendString("<message sender=\""+ Owner.getName() + "\"><text color=\"#000000\"><encrypted type=\""+ Cryptotype +"\" key=\""+ Encrypter.asHex(key) + "\"></encrypted></text></message>");
+                String key = null;
+                System.out.println();
+                if(Cryptotype.equals("Ceasar")) key = "01";
+                else if(Cryptotype.equals("AES")) key = "00";
+                Owner.sendString("<message sender=\""+ Owner.getName() + "\"><text color=\"#000000\"><encrypted type=\""+ Cryptotype +"\" key=\""+ key + "\"></encrypted></text></message>");
             }
             
         }
