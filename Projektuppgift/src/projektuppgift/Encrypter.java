@@ -136,6 +136,17 @@ public class Encrypter {
         return null;
     }
     
+    
+    public byte[] getKey(String CryptoType){
+        if(CryptoType.equals("AES")){
+            return this.getAESKey();
+        }
+        if(CryptoType.equals("Ceasar")){
+            return this.getCeasarKey();
+        }
+        return null;
+    }
+    
     public byte[] getCeasarKey(){
         
         byte a = (byte)CeasarKey;   
