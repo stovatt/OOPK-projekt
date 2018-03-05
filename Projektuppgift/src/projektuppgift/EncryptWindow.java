@@ -45,7 +45,7 @@ public class EncryptWindow extends Observable implements ActionListener{
         
         textBox = new JTextPane();
         textBox.setText(msgText);
-        textBox.setBackground(Color.RED);
+//        textBox.setBackground(Color.RED);
         textBox.setEditable(false);
         JScrollPane scrollBox = new JScrollPane(textBox);
         scrollBox.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
