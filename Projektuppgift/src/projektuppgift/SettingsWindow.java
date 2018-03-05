@@ -40,25 +40,16 @@ public class SettingsWindow extends Observable implements ActionListener{
     private JComboBox<Color> colorDrop;
     private JButton saveBtn;
     
-    public SettingsWindow(){
-        
-//        System.out.println("Hi from settings window");
-        
+    public SettingsWindow(String name, Color color){
+                
         theFrame = new JFrame("Settings");
         
-        nameField = new JTextField(20);
+        nameField = new JTextField(name, 20);
         nameField.addActionListener(this);
         JLabel nameFieldLabel = new JLabel("Name: ");
         JPanel namePanel = new JPanel();
         namePanel.add(nameFieldLabel);
         namePanel.add(nameField);
-        
-//        portField = new JTextField(20);
-//        portField.addActionListener(this);
-//        JLabel portFieldLabel = new JLabel("Port: ");
-//        JPanel portPanel = new JPanel();
-//        portPanel.add(portFieldLabel);
-//        portPanel.add(portField);
         
         Color[] colors = new Color[] {Color.BLACK, Color.RED, Color.BLUE,
                         Color.GREEN, Color.ORANGE, Color.PINK};
@@ -69,7 +60,6 @@ public class SettingsWindow extends Observable implements ActionListener{
         
         theFrame.setLayout(new GridLayout(0,1));
         theFrame.getContentPane().add(namePanel);
-//        theFrame.getContentPane().add(portPanel);
         theFrame.getContentPane().add(colorDrop);
         theFrame.getContentPane().add(saveBtn);
         
@@ -80,7 +70,6 @@ public class SettingsWindow extends Observable implements ActionListener{
     
     public void actionPerformed(ActionEvent e){
          String name = nameField.getText();
-//         String port = portField.getText();
          Color color = (Color)colorDrop.getSelectedItem();
          
          User me = new User(null);
