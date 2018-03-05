@@ -58,7 +58,6 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     private void initiate(){
-        this.draw();
         this.openSettings();
     }
     
@@ -169,14 +168,6 @@ public class View extends Observable implements Observer, ActionListener{
         setWindow.addObserver(this);
     }
     
-//    public void changeName(){
-//        
-//    }
-//    
-//    public void changeColor(){
-//        
-//    }
-    
     public void sendMsg(int[] ind){
         String msgText = MsgBox.getText();
         
@@ -261,14 +252,22 @@ public class View extends Observable implements Observer, ActionListener{
         }
         if(o instanceof SettingsWindow){
             User me = (User)arg;
+            theModel.setMe(me);
+            if(!initiated){
+                this.draw();
+                initiated = true;
+            }
+            else{
             activeChat.setMe(me);
-            
+            }   
         }
         if(o instanceof ConnectToServerWindow){
             String[] newArg = (String[])arg;
             String IP = newArg[0];
             int port = Integer.parseInt(newArg[1]);
-            String message = newArg[2];
+            String messageText = newArg[2];
+            Message message = new Message(theModel.getMe().getName(),
+                    theModel.getMe().getColor(), messageText, new int[] {}, false, true);
             
             theModel.connectToOtherChat(IP, port, message);
         }
