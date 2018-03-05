@@ -21,6 +21,8 @@ import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.StyleConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -70,6 +72,7 @@ public class View extends Observable implements Observer, ActionListener{
         
         historyPanels = new JTabbedPane();
         historyPanels.setPreferredSize(new Dimension(400, 200));
+        historyPanels.addChangeListener(changeListener);
         
         chatList = new ArrayList<>();
         chatHistorys = new ArrayList<>();
@@ -196,31 +199,41 @@ public class View extends Observable implements Observer, ActionListener{
         CRWindow.addObserver(this);
     }
     
-    public void changeTab(){
+    public void changeTab(int index){
         
+        ChatModel newActiveC = chatList.get(index);
+        changeActiveChat(newActiveC);    
     }
     
     public void kick(){
         
     }
     
-        public void updateChatHistory(Message newMessage, ChatModel chat){
-        int index = chatList.indexOf(chat);
-        JTextPane activeChatHistory = chatHistorys.get(index);
-        Color color = newMessage.getColor();
-        String text = newMessage.getText();
-        String name = newMessage.getName();
+    public void updateChatHistory(Message newMessage, ChatModel chat){
+    int index = chatList.indexOf(chat);
+    JTextPane activeChatHistory = chatHistorys.get(index);
+    Color color = newMessage.getColor();
+    String text = newMessage.getText();
+    String name = newMessage.getName();
         
-        StyledDocument doc = activeChatHistory.getStyledDocument();
-        Style style = doc.addStyle("textStyle", null);
-        StyleConstants.setForeground(style, color);
+    StyledDocument doc = activeChatHistory.getStyledDocument();
+    Style style = doc.addStyle("textStyle", null);
+    StyleConstants.setForeground(style, color);
         
-        try
-        {
-            doc.insertString(doc.getLength(), "\n" + name + ": " + text ,doc.getStyle("textStyle"));
+    try
+    {
+        doc.insertString(doc.getLength(), "\n" + name + ": " + text ,doc.getStyle("textStyle"));
+    }
+    catch(Exception e) { System.out.println(e); }
+    }
+    
+    ChangeListener changeListener = new ChangeListener() {
+        public void stateChanged(ChangeEvent changeEvent) {
+            JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
+            int index = sourceTabbedPane.getSelectedIndex();
+            changeTab(index);
         }
-        catch(Exception e) { System.out.println(e); }
-        }
+    };
     
     public void update(Observable o, Object arg){
 //        System.out.println("medelanded kom fram till View");
