@@ -153,6 +153,7 @@ public class Projektuppgift {
             myModel = new Model(4444);
             myView = new View(myModel);
             myController = new Controller(myView, myModel);
+            myModel.setMyController(myController);
             
 //            Message firstMessage = new Message("Putte", Color.RED, "Hej, får jag vara med?");
 //            myView.showConnectionRequestWindow(firstMessage);

@@ -38,7 +38,7 @@ import java.awt.Color;
 
 public class XMLConverter {
     
-    private final User Owner;
+    private User Owner;
     
     public XMLConverter(User inUser){
         Owner = inUser;

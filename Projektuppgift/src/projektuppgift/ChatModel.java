@@ -40,6 +40,10 @@ public class ChatModel extends Observable implements Observer{
         return me;
     }
     
+    public void setMe(User inMe){
+        me = inMe;  
+    }
+    
     public void addUser(User inUser){
         Members.add(inUser);
         inUser.addObserver(this);
@@ -91,10 +95,8 @@ public class ChatModel extends Observable implements Observer{
     
     public void update( Observable o, Object arg ){
         if(o instanceof User && arg instanceof Message){
-            
             this.updateChatHistory((Message) arg);
         }
-        notifyObservers();
     }
     
 }

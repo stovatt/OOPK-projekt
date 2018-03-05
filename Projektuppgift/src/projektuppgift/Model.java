@@ -26,6 +26,7 @@ public class Model extends Observable implements Observer{
     private int port;
     private ChatModel activeChat;
     public ArrayList ChatList;   // public for testing
+    private Controller myController;
     
     public Model(int inPort){
         me = new User(null);
@@ -48,8 +49,8 @@ public class Model extends Observable implements Observer{
             Message Msg = (Message) arg;
             
             if(Msg.isConnectionRequest()){
-                //int p = myController.requestConnection(Msg);
-                int p = 5;
+                int p = myController.requestConnection(Msg);
+                //int p = 5;
                 User applicant = (User) o;
                 if(p>-1){
                     applicant.setIsApproved();
@@ -115,5 +116,12 @@ public class Model extends Observable implements Observer{
         return port;
     }
  
+    public void setMyController(Controller inController){
+        myController = inController;
+    }
+    
+    public void setMe(User inMe){
+        me = inMe;  
+    }
     
 }

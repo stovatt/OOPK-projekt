@@ -29,7 +29,7 @@ import javax.swing.text.StyleConstants;
 public class View extends Observable implements Observer, ActionListener{
     
     private Model theModel;
-    private ChatModel ActiveChat;
+    private ChatModel activeChat;
     private ArrayList<ChatModel> chatList;
     private JTabbedPane historyPanels;
     private ArrayList<JTextPane> chatHistorys;
@@ -42,7 +42,7 @@ public class View extends Observable implements Observer, ActionListener{
     private JButton connectToChatBtn;
     // private JButton ChangeOpenkeys;
     private JButton kickButton;
-    private User me;
+//    private User me;
     
 //    private Dimension PreferredSize;
     private JFrame TheWindow;
@@ -51,7 +51,7 @@ public class View extends Observable implements Observer, ActionListener{
         
         theModel = inModel;
         theModel.addObserver(this);
-        me = new User(null);
+//        me = new User(null);
 //        PreferredSize = new Dimension(1000, 800);
         this.draw();
     }
@@ -140,8 +140,8 @@ public class View extends Observable implements Observer, ActionListener{
     
     public void changeActiveChat(ChatModel inModel){
         System.out.println("Active chatt satt");
-        ActiveChat = inModel;
-        ActiveChat.addObserver(this);
+        activeChat = inModel;
+        activeChat.addObserver(this);
     }
     
     public void startNewChat(){
@@ -163,22 +163,22 @@ public class View extends Observable implements Observer, ActionListener{
         setWindow.addObserver(this);
     }
     
-    public void changeName(){
-        
-    }
-    
-    public void changeColor(){
-        
-    }
+//    public void changeName(){
+//        
+//    }
+//    
+//    public void changeColor(){
+//        
+//    }
     
     public void sendMsg(int[] ind){
         String msgText = MsgBox.getText();
         
-        Color color = ActiveChat.getMe().getColor();
-        String name = ActiveChat.getMe().getName();    
+        Color color = activeChat.getMe().getColor();
+        String name = activeChat.getMe().getName();    
             
         Message message = new Message(name, color, msgText, ind, false, false);
-        ActiveChat.sendMsg(message);
+        activeChat.sendMsg(message);
         System.out.println(message);
     }
     
@@ -194,23 +194,6 @@ public class View extends Observable implements Observer, ActionListener{
     public int showConnectionRequestWindow(Message inMessage){
         System.out.println("Fick connection request");
         int ans = 0;
-        
-        JFrame requestWindow =  new JFrame();
-        JTextPane msgBox = new JTextPane();
-        msgBox.setText(inMessage.getText());
-        msgBox.setEditable(false);
-        
-        JPanel buttonPanel = new JPanel();
-        JButton allowBtn = new JButton("Allow");
-        JButton denyBtn = new JButton("Deny");
-        buttonPanel.add(allowBtn);
-        buttonPanel.add(denyBtn);
-        
-        //Add components
-        requestWindow.getContentPane().add(msgBox);
-        requestWindow.add(buttonPanel);
-        
-        requestWindow.pack();
         
         return ans;
     }
@@ -243,7 +226,7 @@ public class View extends Observable implements Observer, ActionListener{
     
     public void update(Observable o, Object arg){
 //        System.out.println("medelanded kom fram till View");
-        if(o == ActiveChat){
+        if(o == activeChat){
             if(arg instanceof Message){
                 updateChatHistory((Message)arg, (ChatModel)o);
             }
@@ -270,10 +253,17 @@ public class View extends Observable implements Observer, ActionListener{
             System.out.println(ind);
         }
         if(o instanceof SettingsWindow){
-            me = (User)arg;
+            User me = (User)arg;
+            activeChat.setMe(me);
+            
         }
         if(o instanceof ConnectToServerWindow){
-        // kod för att connecta till server med inputat ipadress
+            String[] newArg = (String[])arg;
+            String IP = newArg[0];
+            int port = Integer.parseInt(newArg[1]);
+            String message = newArg[2];
+            
+            theModel.connectToOtherChat(IP, port, message);
         }
     }
     
