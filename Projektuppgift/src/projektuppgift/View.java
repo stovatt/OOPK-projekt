@@ -42,6 +42,7 @@ public class View extends Observable implements Observer, ActionListener{
     private JButton connectToChatBtn;
     // private JButton ChangeOpenkeys;
     private JButton kickButton;
+    private boolean initiated;
 //    private User me;
     
 //    private Dimension PreferredSize;
@@ -52,12 +53,16 @@ public class View extends Observable implements Observer, ActionListener{
         theModel = inModel;
         theModel.addObserver(this);
         this.addObserver(theModel);
-//        me = new User(null);
-//        PreferredSize = new Dimension(1000, 800);
-        this.draw();
+        initiated = false;
+        this.initiate();
     }
     
-    public void draw(){
+    private void initiate(){
+        this.draw();
+        this.openSettings();
+    }
+    
+    private void draw(){
         
         TheWindow = new JFrame();
         TheWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -192,11 +197,11 @@ public class View extends Observable implements Observer, ActionListener{
         
     }
     
-    public void showConnectionRequestWindow(Message inMessage){
+    public void showConnectionRequestWindow(Object[] list){
         System.out.println("Fick connection request");
         
         int noChats = chatList.size();
-        ConnectionRequestWindow CRWindow = new ConnectionRequestWindow(inMessage, noChats);
+        ConnectionRequestWindow CRWindow = new ConnectionRequestWindow(list, noChats);
         CRWindow.addObserver(this);
     }
     
@@ -268,10 +273,8 @@ public class View extends Observable implements Observer, ActionListener{
             theModel.connectToOtherChat(IP, port, message);
         }
         if(o instanceof ConnectionRequestWindow){
-            int chatNo = (int)arg;
-            
             this.setChanged();
-            notifyObservers(chatNo);
+            notifyObservers(arg);
         }
     }
     
@@ -296,8 +299,8 @@ public class View extends Observable implements Observer, ActionListener{
             
         }
         else if(e.getSource() == kickButton){
-            Message theMessage = new Message("Sarah", Color.GREEN, "Hej", new int[] {}, false, false);
-            showConnectionRequestWindow(theMessage);
+//            Message theMessage = new Message("Sarah", Color.GREEN, "Hej", new int[] {}, false, false);
+//            showConnectionRequestWindow(theMessage);
         }
         else if(e.getSource() == connectToChatBtn){
             connectToServer();
