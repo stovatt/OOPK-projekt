@@ -224,11 +224,14 @@ public class XMLConverter {
         
         // Check if the message contains a keyrequest, if so send an empty message encrypted with both AES and Ceasar
         NodeList KeyRequestTags = doc.getElementsByTagName("keyrequest");
+        System.out.println("antalet funna keyrequest: " + KeyRequestTags.getLength() );
         for(int i = 0; i < KeyRequestTags.getLength(); i++){
             Element Node = (Element) KeyRequestTags.item(i);
             Cryptotype = Node.getAttribute("type");
+            Owner.addAllowedCrypto(Cryptotype);
             if(Owner.isAllowedCrypto(Cryptotype)){
-                Owner.sendString("<message sender=\"Trasan\"> <encrypted type="+ Cryptotype +"></encrypted> </message>");
+                byte[] key = Owner.getKey(Cryptotype);
+                Owner.sendString("<message sender=\""+ Owner.getName() + "\"><text color=\"#000000\"><encrypted type=\""+ Cryptotype +"\" key=\""+ Encrypter.asHex(key) + "\"></encrypted></text></message>");
             }
             
         }

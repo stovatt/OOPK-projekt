@@ -99,7 +99,10 @@ public class User extends Observable implements Observer{
     
     public void addAllowedCrypto(String CryptoType){
         if(!allowedCryptos.contains(CryptoType)){
-            allowedCryptos.add(CryptoType);
+            if(CryptoType.equals("AES") || CryptoType.equals("Ceasar")){
+                allowedCryptos.add(CryptoType);
+            }
+            
         }
     }
     
@@ -209,6 +212,10 @@ public class User extends Observable implements Observer{
     
     public Color getColor(){
         return myColour;
+    }
+    
+    public byte[] getKey( String CryptoType){
+        return myEncrypter.getKey(CryptoType);
     }
     
     public void update( Observable o, Object arg){
