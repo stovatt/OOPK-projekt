@@ -36,15 +36,15 @@ public class View extends Observable implements Observer, ActionListener{
     private JTabbedPane historyPanels;
     private ArrayList<JTextPane> chatHistorys;
     private JTextArea msgBox;
-    private JButton NewChatBtn;
-    private JButton PersonalSettingsBtn;
-    private JButton SendMsgBtn;
-    private JButton SendAndEncryptBtn;
-    private JButton SendFileBtn;
+    private JButton newChatBtn;
+    private JButton personalSettingsBtn;
+    private JButton sendMsgBtn;
+    private JButton sendAndEncryptBtn;
+    private JButton sendFileBtn;
     private JButton connectToChatBtn;
     private JButton kickButton;
     private JButton closeBtn;
-    private JFrame TheWindow;
+    private JFrame theWindow;
     
     public View(){
         
@@ -57,8 +57,8 @@ public class View extends Observable implements Observer, ActionListener{
     
     private void draw(){
         
-        TheWindow = new JFrame();
-        TheWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        theWindow = new JFrame();
+        theWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Chat history and chat control buttons
         
@@ -69,9 +69,9 @@ public class View extends Observable implements Observer, ActionListener{
         chatList = new ArrayList<>();
         chatHistorys = new ArrayList<>();
 
-        NewChatBtn = new JButton("Start new chat");
+        newChatBtn = new JButton("Start new chat");
         connectToChatBtn = new JButton("Connect to server");
-        PersonalSettingsBtn = new JButton("Open settings");
+        personalSettingsBtn = new JButton("Open settings");
         kickButton = new JButton("Kick from chat");
         closeBtn = new JButton("Close");
         
@@ -80,9 +80,9 @@ public class View extends Observable implements Observer, ActionListener{
         JPanel controlButtonPanel = new JPanel();
         controlButtonPanel.setLayout(new GridLayout(0,1));
         
-        controlButtonPanel.add(NewChatBtn);
+        controlButtonPanel.add(newChatBtn);
         controlButtonPanel.add(connectToChatBtn);
-        controlButtonPanel.add(PersonalSettingsBtn);
+        controlButtonPanel.add(personalSettingsBtn);
         controlButtonPanel.add(kickButton);
         controlButtonPanel.add(closeBtn);
         
@@ -93,33 +93,33 @@ public class View extends Observable implements Observer, ActionListener{
         
         msgBox = new JTextArea("", 8, 40);
         msgBox.setEditable(true);
-        JPanel MsgPanel = new JPanel();
-        MsgPanel.add(msgBox);
+        JPanel msgPanel = new JPanel();
+        msgPanel.add(msgBox);
         JTabbedPane msgTabbedPanel = new JTabbedPane();
-        msgTabbedPanel.addTab("Write here", null, MsgPanel,
+        msgTabbedPanel.addTab("Write here", null, msgPanel,
                                     "This is a tab, but it looks ok.");
         
-        SendMsgBtn = new JButton("Send Message");
-        SendMsgBtn.setBackground(Color.GREEN);
-        SendAndEncryptBtn = new JButton("Send+Encrypt Message");
-        SendFileBtn = new JButton("Send File");
-        JPanel MsgButtonPanel = new JPanel();
+        sendMsgBtn = new JButton("Send Message");
+        sendMsgBtn.setBackground(Color.GREEN);
+        sendAndEncryptBtn = new JButton("Send+Encrypt Message");
+        sendFileBtn = new JButton("Send File");
+        JPanel msgButtonPanel = new JPanel();
         
-        MsgButtonPanel.setLayout(new GridLayout(0,1));
-        MsgButtonPanel.add(SendMsgBtn);
-        MsgButtonPanel.add(SendAndEncryptBtn);
-        MsgButtonPanel.add(SendFileBtn);
+        msgButtonPanel.setLayout(new GridLayout(0,1));
+        msgButtonPanel.add(sendMsgBtn);
+        msgButtonPanel.add(sendAndEncryptBtn);
+        msgButtonPanel.add(sendFileBtn);
         
         JSplitPane msgSplitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                           msgTabbedPanel, MsgButtonPanel);
+                           msgTabbedPanel, msgButtonPanel);
         
         // Add listeners to buttons
         
-        SendMsgBtn.addActionListener(this);
-        SendAndEncryptBtn.addActionListener(this);
-        SendFileBtn.addActionListener(this);
-        NewChatBtn.addActionListener(this);
-        PersonalSettingsBtn.addActionListener(this);
+        sendMsgBtn.addActionListener(this);
+        sendAndEncryptBtn.addActionListener(this);
+        sendFileBtn.addActionListener(this);
+        newChatBtn.addActionListener(this);
+        personalSettingsBtn.addActionListener(this);
         kickButton.addActionListener(this);
         connectToChatBtn.addActionListener(this);
         closeBtn.addActionListener(this);
@@ -128,9 +128,9 @@ public class View extends Observable implements Observer, ActionListener{
         
         JSplitPane theSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                            controlPanel, msgSplitPanel);
-        TheWindow.getContentPane().add(theSplitPane);
-        TheWindow.pack();
-        TheWindow.setVisible(true);
+        theWindow.getContentPane().add(theSplitPane);
+        theWindow.pack();
+        theWindow.setVisible(true);
     }
     
     public void changeActiveChat(ChatModel inModel){
@@ -241,7 +241,7 @@ public class View extends Observable implements Observer, ActionListener{
         
         leave();
         
-        TheWindow.dispose();
+        theWindow.dispose();
         System.exit(0);
         
         return 0;
@@ -345,21 +345,21 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void actionPerformed(ActionEvent e){
-        if(e.getSource() == SendMsgBtn){
+        if(e.getSource() == sendMsgBtn){
             int[] ind = {};
             sendMsg(ind);
         }
-        else if(e.getSource() == SendAndEncryptBtn){
+        else if(e.getSource() == sendAndEncryptBtn){
             String msgText = msgBox.getText();
             askForEncryptIndex(msgText);
         }
-        else if(e.getSource() == SendFileBtn){
+        else if(e.getSource() == sendFileBtn){
             
         }
-        else if(e.getSource() == NewChatBtn){
+        else if(e.getSource() == newChatBtn){
             
         }
-        else if(e.getSource() == PersonalSettingsBtn){
+        else if(e.getSource() == personalSettingsBtn){
             openSettings();
             
         }
