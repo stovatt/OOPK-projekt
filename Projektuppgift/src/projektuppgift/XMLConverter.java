@@ -132,9 +132,8 @@ public class XMLConverter {
             return output;
             
         } catch (ParserConfigurationException | TransformerException ex) {
-            Logger.getLogger(XMLConverter.class.getName()).log(Level.SEVERE, null, ex);
+            return "<message sender= \" unkown \"><text color=\"#000000\"> Could not read message</text></message>";
         }
-        return "hej";
     }
     
     
@@ -154,11 +153,9 @@ public class XMLConverter {
         Document doc = null;
         try {
             doc = db.parse(is);
-        } catch (SAXException ex) {
-            Logger.getLogger(XMLConverter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(XMLConverter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (SAXException | IOException ex) {
+            return new Message("Unknown", Color.BLACK, "Could not read message", new int[] {}, false, false);
+        } 
         
         
         // Now we have created a doc containing the info of the received message
