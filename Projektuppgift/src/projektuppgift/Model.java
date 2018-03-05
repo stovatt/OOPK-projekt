@@ -79,7 +79,7 @@ public class Model extends Observable implements Observer{
         
     }
     
-    public void connectToOtherChat( String Ip, int port, String requestMsg ){
+    public void connectToOtherChat( String Ip, int port, Message requestMsg ){
         Socket Connection = null;
         try {
             Connection = new Socket(Ip, port);
@@ -88,7 +88,7 @@ public class Model extends Observable implements Observer{
         }
         if (Connection != null ){
             User FirstMember = new User(Connection);
-            FirstMember.sendMessage(new Message(me.getName(), Color.BLACK, requestMsg, new int[] {}, false, true ));
+            FirstMember.sendMessage(requestMsg);
             ChatModel NewChat = createNewChat(FirstMember, false);
 //            NewChat.sendMsg( new Message(me.getName(), Color.BLACK, requestMsg, new int[] {}, false, true ) );
         }
@@ -101,7 +101,7 @@ public class Model extends Observable implements Observer{
     
     public ChatModel createNewChat( User firstMember, boolean isHost ){
         firstMember.sendString("<message sender=\"Trasan\"> <keyrequest type=\"Ceasar\"></keyrequest> <keyrequest type=\"AES\"></keyrequest> </message>");
-        ChatModel a = new ChatModel(new User(null), firstMember, isHost);
+        ChatModel a = new ChatModel(me, firstMember, isHost);
         ChatList.add(a);
         this.setChanged();
         System.out.println("Notifiar view med ny chatmodel");
@@ -128,6 +128,10 @@ public class Model extends Observable implements Observer{
     
     public void setMe(User inMe){
         me = inMe;  
+    }
+    
+    public User getMe(){
+        return me;
     }
     
 }
