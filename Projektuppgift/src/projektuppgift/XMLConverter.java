@@ -142,18 +142,13 @@ public class XMLConverter {
         
         // First we turn the string into an inputSource
         DocumentBuilder db = null;
-        try {
-            db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(XMLConverter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        InputSource is = new InputSource();
-        is.setCharacterStream(new StringReader(xmlRecords));
-
         Document doc = null;
         try {
+            db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xmlRecords));
             doc = db.parse(is);
-        } catch (SAXException | IOException ex) {
+        } catch (SAXException | IOException | ParserConfigurationException ex) {
             return new Message("Unknown", Color.BLACK, "Could not read message", new int[] {}, false, false);
         } 
         
