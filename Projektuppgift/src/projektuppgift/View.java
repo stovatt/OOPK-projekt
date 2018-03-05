@@ -41,16 +41,17 @@ public class View extends Observable implements Observer, ActionListener{
     private JButton SendFileBtn;
     // private JButton ChangeOpenkeys;
     private JButton kickButton;
+    private User me;
     
-    private Dimension PreferredSize;
+//    private Dimension PreferredSize;
     private JFrame TheWindow;
     
     public View(Model inModel){
         
         theModel = inModel;
         theModel.addObserver(this);
-        User me = this.getSettings();
-        PreferredSize = new Dimension(1000, 800);
+        me = new User(null);
+//        PreferredSize = new Dimension(1000, 800);
         this.draw();
     }
     
@@ -152,20 +153,12 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void openSettings(){
-        
+        SettingsWindow setWindow = new SettingsWindow();
+        setWindow.addObserver(this);
     }
     
     public void changeName(){
         
-    }
-    
-    public User getSettings(){
-        
-        
-        
-        
-        User me = new User(null);
-        return(me);
     }
     
     public void changeColor(){
@@ -224,8 +217,26 @@ public class View extends Observable implements Observer, ActionListener{
         
     }
     
+        public void updateChatHistory(Message newMessage, ChatModel chat){
+        int index = chatList.indexOf(chat);
+        JTextPane activeChatHistory = chatHistorys.get(index);
+        Color color = newMessage.getColor();
+        String text = newMessage.getText();
+        String name = newMessage.getName();
+        
+        StyledDocument doc = activeChatHistory.getStyledDocument();
+        Style style = doc.addStyle("textStyle", null);
+        StyleConstants.setForeground(style, color);
+        
+        try
+        {
+            doc.insertString(doc.getLength(), "\n" + name + ": " + text ,doc.getStyle("textStyle"));
+        }
+        catch(Exception e) { System.out.println(e); }
+        }
+    
     public void update(Observable o, Object arg){
-        System.out.println("medelanded kom fram till View");
+//        System.out.println("medelanded kom fram till View");
         if(o == ActiveChat){
             if(arg instanceof Message){
                 updateChatHistory((Message)arg, (ChatModel)o);
@@ -249,8 +260,11 @@ public class View extends Observable implements Observer, ActionListener{
         if(o instanceof EncryptWindow){
             int[] ind = (int[])arg;
             sendMsg(ind);
-            System.out.println("hejehj");
+//            System.out.println("hejehj");
             System.out.println(ind);
+        }
+        if(o instanceof SettingsWindow){
+            me = (User)arg;
         }
     }
     
@@ -259,7 +273,7 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void actionPerformed(ActionEvent e){
-        System.out.println("Fick ae");
+//        System.out.println("Fick ae");
         if(e.getSource() == SendMsgBtn){
             int[] ind = {};
             sendMsg(ind);
@@ -268,28 +282,18 @@ public class View extends Observable implements Observer, ActionListener{
             String msgText = MsgBox.getText();
             askForEncryptIndex(msgText);
         }
+        else if(e.getSource() == SendFileBtn){
+            
+        }
+        else if(e.getSource() == NewChatBtn){
+            
+        }
+        else if(e.getSource() == PersonalSettingsBtn){
+            openSettings();
+            
+        }
+        else if(e.getSource() == kickButton){
+            
+        }
     }
-    
-//    public void messageReceive(Message inMessage, ChatModel chat){
-//        
-//    }
-    
-    public void updateChatHistory(Message newMessage, ChatModel chat){
-        int index = chatList.indexOf(chat);
-        JTextPane activeChatHistory = chatHistorys.get(index);
-        Color color = newMessage.getColor();
-        String text = newMessage.getText();
-        String name = newMessage.getName();
-        
-        StyledDocument doc = activeChatHistory.getStyledDocument();
-        Style style = doc.addStyle("textStyle", null);
-        StyleConstants.setForeground(style, color);
-        
-        try
-        {
-            doc.insertString(doc.getLength(), "\n" + name + ": " + text ,doc.getStyle("textStyle"));
-        }
-        catch(Exception e) { System.out.println(e); }
-        }
-    
 }
