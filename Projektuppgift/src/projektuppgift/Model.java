@@ -46,9 +46,9 @@ public class Model extends Observable implements Observer{
         }
         if(o instanceof View){
             Object[] newArg = (Object[]) arg;
-            int p = (int)newArg[0];
+            int p = (int)newArg[0] - 1;
             User applicant = (User)newArg[1];
-            System.out.println("hejjj");
+            System.out.println("lagt till i chatt: " + p);
                 if(p>-1){
                     applicant.setIsApproved();
                     Object[] Chats = ChatList.toArray();
@@ -62,6 +62,7 @@ public class Model extends Observable implements Observer{
                     }
                 }
                 else{
+                    applicant.sendString("<message sender=\""+ me.getName() + "\"><request type=\"no\"></request></message>");
                     applicant.kick();
                 }
         }

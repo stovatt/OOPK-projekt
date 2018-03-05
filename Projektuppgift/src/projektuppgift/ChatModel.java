@@ -40,6 +40,10 @@ public class ChatModel extends Observable implements Observer{
         return me;
     }
     
+    public boolean isHost(){
+        return isHost;
+    }
+    
     public void setMe(User inMe){
         me = inMe;  
     }
@@ -65,12 +69,14 @@ public class ChatModel extends Observable implements Observer{
 //        }
 //    }
         
-    public void sendMsg(Message Output){
+    public void sendMsg(Message Output, User sender){
         Object[] List = Members.toArray();
         User tempUser = null;
         for(Object Member: List){
             tempUser = (User) Member; 
-            tempUser.sendMessage(Output);
+            if(!tempUser.equals(sender)){
+                tempUser.sendMessage(Output);
+            }
         }
         this.updateChatHistory(Output);
     }
@@ -95,7 +101,12 @@ public class ChatModel extends Observable implements Observer{
     
     public void update( Observable o, Object arg ){
         if(o instanceof User && arg instanceof Message){
-            this.updateChatHistory((Message) arg);
+            User sender = (User)o;
+            Message Msg = (Message) arg;
+            if(sender.isApproved() || Msg.isConnectionRequest()){
+                this.sendMsg(Msg, sender);
+            }
+            
         }
     }
     
