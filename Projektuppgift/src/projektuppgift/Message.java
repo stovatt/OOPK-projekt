@@ -57,6 +57,10 @@ public class Message {
         Text = Input;
     }
     
+    public void setName(String inName){
+        Name = inName;
+    }
+    
     public int[] getRGB(){
         int[] output = {TheColor.getRed(), TheColor.getGreen(), TheColor.getBlue()};
         return output;
