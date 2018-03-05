@@ -142,13 +142,18 @@ public class XMLConverter {
         
         // First we turn the string into an inputSource
         DocumentBuilder db = null;
-        Document doc = null;
         try {
             db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(xmlRecords));
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(XMLConverter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        InputSource is = new InputSource();
+        is.setCharacterStream(new StringReader(xmlRecords));
+
+        Document doc = null;
+        try {
             doc = db.parse(is);
-        } catch (SAXException | IOException | ParserConfigurationException ex) {
+        } catch (SAXException | IOException ex) {
             return new Message("Unknown", Color.BLACK, "Could not read message", new int[] {}, false, false);
         } 
         
@@ -214,7 +219,6 @@ public class XMLConverter {
         NodeList DisconnectTags = doc.getElementsByTagName("disconnect");
         Disconnect = DisconnectTags.getLength() != 0;
         
-        
         // Check if this is a connection request
         boolean ConnectionRequest;
         NodeList ConnectionRequestTags = doc.getElementsByTagName("request");
@@ -238,7 +242,7 @@ public class XMLConverter {
         
         // Create the output in form of an instance of the "Message" class. Disregard what parts were encrypted or not
         
-        int[] dummy = {};
+        int[] dummy = {0,0};
         return new Message(sender, TheColor, Texten, dummy, Disconnect, ConnectionRequest);
     }
     

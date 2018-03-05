@@ -42,18 +42,18 @@ public class StartWindow extends Observable implements ActionListener{
     
     public StartWindow(){
         
-        System.out.println("Hi from settings window");
+//        System.out.println("Hi from settings window");
         
         theFrame = new JFrame("Settings");
         
-        nameField = new JTextField(20);
+        nameField = new JTextField("Unknwn user",20);
         nameField.addActionListener(this);
         JLabel nameFieldLabel = new JLabel("Name: ");
         JPanel namePanel = new JPanel();
         namePanel.add(nameFieldLabel);
         namePanel.add(nameField);
         
-        portField = new JTextField(20);
+        portField = new JTextField("4444", 20);
         portField.addActionListener(this);
         JLabel portFieldLabel = new JLabel("Port: ");
         JPanel portPanel = new JPanel();
@@ -69,7 +69,7 @@ public class StartWindow extends Observable implements ActionListener{
         
         theFrame.setLayout(new GridLayout(0,1));
         theFrame.getContentPane().add(namePanel);
-//        theFrame.getContentPane().add(portPanel);
+        theFrame.getContentPane().add(portPanel);
         theFrame.getContentPane().add(colorDrop);
         theFrame.getContentPane().add(saveBtn);
         

@@ -219,7 +219,7 @@ public class View extends Observable implements Observer, ActionListener{
             int chatIndex = chatList.indexOf(activeChat);
             chatHistorys.remove(chatIndex);
             chatList.remove(chatIndex);
-//            historyPanels.remove(chatIndex);
+            historyPanels.remove(chatIndex);
             
         }
         
