@@ -197,7 +197,7 @@ public class XMLConverter {
                 Owner.addAllowedCrypto(Cryptotype);                   // add that that one may send messages encrypted with this kind of crypto
                 CryptoKey = ENode.getAttribute("key");
                 String Encryptedtext = ENode.getTextContent();
-                if(Encryptedtext.equals("")){
+                if(!Encryptedtext.equals("")){
                     DecryptedText = Owner.decryptString(Encryptedtext, Cryptotype, CryptoKey) ;
                 }
                 else{
@@ -235,10 +235,8 @@ public class XMLConverter {
             Cryptotype = Node.getAttribute("type");
             Owner.addAllowedCrypto(Cryptotype);
             if(Owner.isAllowedCrypto(Cryptotype)){
-                String key = null;
-                System.out.println();
-                if(Cryptotype.equals("Ceasar")) key = "01";
-                else if(Cryptotype.equals("AES")) key = "00";
+                String key = "";
+                key = Encrypter.asHex(Owner.getKey(Cryptotype));
                 Owner.sendString("<message sender=\""+ Owner.getName() + "\"><text color=\"#000000\"><encrypted type=\""+ Cryptotype +"\" key=\""+ key + "\"></encrypted></text></message>");
             }
             
