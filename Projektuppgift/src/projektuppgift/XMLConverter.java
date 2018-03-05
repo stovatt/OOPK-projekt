@@ -226,6 +226,7 @@ public class XMLConverter {
         boolean ConnectionRequest;
         NodeList ConnectionRequestTags = doc.getElementsByTagName("request");
         ConnectionRequest = ConnectionRequestTags.getLength() != 0;
+        if(ConnectionRequest) Texten = root.getTextContent();
         
         // Check if the message contains a keyrequest, if so send an empty message encrypted with both AES and Ceasar
         NodeList KeyRequestTags = doc.getElementsByTagName("keyrequest");

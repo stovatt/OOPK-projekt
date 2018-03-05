@@ -44,14 +44,9 @@ public class Model extends Observable implements Observer{
             User Proposer = new User( (Socket) arg);
             Proposer.addObserver(this);
         }
-        
-        if(arg instanceof Message){
-            Message Msg = (Message) arg;
-            
-            if(Msg.isConnectionRequest()){
-                int p = myController.requestConnection(Msg);
-                //int p = 5;
-                User applicant = (User) o;
+        if(o instanceof View){
+            int p = (int)arg;
+            User applicant = (User) o;
                 if(p>-1){
                     applicant.setIsApproved();
                     Object[] Chats = ChatList.toArray();
@@ -67,7 +62,14 @@ public class Model extends Observable implements Observer{
                 else{
                     applicant.kick();
                 }
-                
+        }
+        
+        if(arg instanceof Message){
+            Message Msg = (Message) arg;
+            
+            if(Msg.isConnectionRequest()){
+                myController.requestConnection(Msg);
+                //int p = 5;
             }
         }
         

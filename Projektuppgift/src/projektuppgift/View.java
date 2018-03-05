@@ -51,6 +51,7 @@ public class View extends Observable implements Observer, ActionListener{
         
         theModel = inModel;
         theModel.addObserver(this);
+        this.addObserver(theModel);
 //        me = new User(null);
 //        PreferredSize = new Dimension(1000, 800);
         this.draw();
@@ -191,11 +192,12 @@ public class View extends Observable implements Observer, ActionListener{
         
     }
     
-    public int showConnectionRequestWindow(Message inMessage){
+    public void showConnectionRequestWindow(Message inMessage){
         System.out.println("Fick connection request");
-        int ans = 0;
         
-        return ans;
+        int noChats = chatList.size();
+        ConnectionRequestWindow CRWindow = new ConnectionRequestWindow(inMessage, noChats);
+        CRWindow.addObserver(this);
     }
     
     public void changeTab(){
@@ -265,10 +267,12 @@ public class View extends Observable implements Observer, ActionListener{
             
             theModel.connectToOtherChat(IP, port, message);
         }
-    }
-    
-    public void notifyObservers(Object arg){
-        
+        if(o instanceof ConnectionRequestWindow){
+            int chatNo = (int)arg;
+            
+            this.setChanged();
+            notifyObservers(chatNo);
+        }
     }
     
     public void actionPerformed(ActionEvent e){
@@ -292,7 +296,8 @@ public class View extends Observable implements Observer, ActionListener{
             
         }
         else if(e.getSource() == kickButton){
-            
+            Message theMessage = new Message("Sarah", Color.GREEN, "Hej", new int[] {}, false, false);
+            showConnectionRequestWindow(theMessage);
         }
         else if(e.getSource() == connectToChatBtn){
             connectToServer();

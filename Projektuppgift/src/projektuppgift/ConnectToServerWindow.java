@@ -37,7 +37,7 @@ public class ConnectToServerWindow extends Observable implements ActionListener{
     private JFrame theFrame;
     private JTextField ipField;
     private JTextField portField;
-    private JTextField messageField;
+    private JTextArea messageField;
     private JButton connectBtn;
     
     public ConnectToServerWindow(){
@@ -46,22 +46,21 @@ public class ConnectToServerWindow extends Observable implements ActionListener{
         
         theFrame = new JFrame("Connect to server");
         
-        ipField = new JTextField(20);
-        ipField.addActionListener(this);
+        ipField = new JTextField("130.237.226.43", 25);
+//        ipField.addActionListener(this);
         JLabel ipFieldLabel = new JLabel("IP: ");
         JPanel ipPanel = new JPanel();
         ipPanel.add(ipFieldLabel);
         ipPanel.add(ipField);
         
-        portField = new JTextField(20);
-        portField.addActionListener(this);
+        portField = new JTextField("4444", 25);
+//        portField.addActionListener(this);
         JLabel portFieldLabel = new JLabel("Port: ");
         JPanel portPanel = new JPanel();
         portPanel.add(portFieldLabel);
         portPanel.add(portField);
         
-        messageField = new JTextField(20);
-        messageField.addActionListener(this);
+        messageField = new JTextArea("Hej, får jag vara med i din chatt?", 2, 20);
         JLabel messageFieldLabel = new JLabel("Message: ");
         JPanel messagePanel = new JPanel();
         messagePanel.add(messageFieldLabel);

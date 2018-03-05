@@ -35,6 +35,7 @@ public class Encrypter {
         KeyGenerator AESgen = KeyGenerator.getInstance("AES");
         AESgen.init(128);
         AESkey = (SecretKeySpec)AESgen.generateKey();
+
         // Create cipher object
         AEScipher = Cipher.getInstance("AES");
     }
@@ -109,7 +110,7 @@ public class Encrypter {
     
     public byte[] aesEncrypt(byte[] inputBytes){
         try {
-            // Encrypt 
+            // Encrypt
             AEScipher.init(Cipher.ENCRYPT_MODE, AESkey);
             return AEScipher.doFinal(inputBytes);
         
@@ -135,7 +136,6 @@ public class Encrypter {
         }
         return null;
     }
-    
     
     public byte[] getKey(String CryptoType){
         if(CryptoType.equals("AES")){
