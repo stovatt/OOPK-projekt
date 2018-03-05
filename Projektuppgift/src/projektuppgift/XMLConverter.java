@@ -162,15 +162,6 @@ public class XMLConverter {
         // Find who sent the message
         String sender = root.getAttribute("sender");
         
-        
-        // Check if the User is to disconnect
-        boolean Disconnect;
-        NodeList DisconnectTags = doc.getElementsByTagName("disconnect");
-        Disconnect = DisconnectTags.getLength() != 0;
-        if(Disconnect){
-            return new Message("Server", Color.BLACK, sender + " har loggat ut!", new int[] {}, Disconnect, false);
-        }
-        
         // start reading the text
         NodeList TheTextList = doc.getElementsByTagName("text");
         Color TheColor = null;
@@ -218,6 +209,10 @@ public class XMLConverter {
         Owner.setName(sender);
         Owner.setColor(TheColor);
         
+        // Check if the User is to disconnect
+        boolean Disconnect;
+        NodeList DisconnectTags = doc.getElementsByTagName("disconnect");
+        Disconnect = DisconnectTags.getLength() != 0;
         
         
         // Check if this is a connection request
