@@ -42,25 +42,11 @@ public class View extends Observable implements Observer, ActionListener{
     private JButton SendAndEncryptBtn;
     private JButton SendFileBtn;
     private JButton connectToChatBtn;
-    // private JButton ChangeOpenkeys;
     private JButton kickButton;
-    private boolean initiated;
-//    private User me;
-    
-//    private Dimension PreferredSize;
     private JFrame TheWindow;
     
-    public View(Model inModel){
-        
-        theModel = inModel;
-        theModel.addObserver(this);
-        this.addObserver(theModel);
-        initiated = false;
-        this.initiate();
-    }
-    
-    private void initiate(){
-        this.openSettings();
+    public View(){
+        new StartWindow();
     }
     
     private void draw(){
@@ -76,15 +62,6 @@ public class View extends Observable implements Observer, ActionListener{
         
         chatList = new ArrayList<>();
         chatHistorys = new ArrayList<>();
-        
-//        chatHistory = new JTextArea("chatHistory", 20, 30);
-//        chatHistory.setEditable(false);
-//        JScrollPane chatPanel = new JScrollPane(chatHistory);
-//        JScrollPane chatPanel2 = new JScrollPane();
-//        historyPanels.addTab("Chat 1", null, chatPanel,
-//                  "Does nothing");
-//        historyPanels.addTab("Chat 2", null, chatPanel2,
-//                  "Does nothing");
 
         NewChatBtn = new JButton("Start new chat");
         connectToChatBtn = new JButton("Connect to server");
@@ -103,8 +80,6 @@ public class View extends Observable implements Observer, ActionListener{
         
         JSplitPane controlPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                            historyPanels, controlButtonPanel);
-        
-//        controlPanel.add(controlButtonPanel);
         
         //Buttons and textfields for sending messages
         
@@ -147,9 +122,16 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void changeActiveChat(ChatModel inModel){
-        System.out.println("Active chatt satt");
+//        System.out.println("Active chatt satt");
         activeChat = inModel;
         activeChat.addObserver(this);
+        
+        if(activeChat.isHost()){
+            kickButton.setText("Kick from Chat");
+        }
+        else{
+            kickButton.setText("Leave Chat");
+        }
     }
     
     public void startNewChat(){
@@ -178,7 +160,7 @@ public class View extends Observable implements Observer, ActionListener{
         String name = activeChat.getMe().getName();    
             
         Message message = new Message(name, color, msgText, ind, false, false);
-        activeChat.sendMsg(message);
+        activeChat.sendMsg(message, theModel.getMe());
         System.out.println(message);
     }
     
@@ -236,15 +218,14 @@ public class View extends Observable implements Observer, ActionListener{
     };
     
     public void update(Observable o, Object arg){
-//        System.out.println("medelanded kom fram till View");
-        if(o == activeChat){
+        if(o instanceof ChatModel){
             if(arg instanceof Message){
                 updateChatHistory((Message)arg, (ChatModel)o);
             }
         }
         if(o == theModel){
             if(arg instanceof ChatModel){
-                System.out.println(((ChatModel) arg).getMe().getName());
+//                System.out.println(((ChatModel) arg).getMe().getName());
                 chatList.add((ChatModel)arg);
                 JTextPane chatHistory = new JTextPane();
                 //set size 20, 30
@@ -254,7 +235,11 @@ public class View extends Observable implements Observer, ActionListener{
                 int chatNo = chatList.size();
                 historyPanels.addTab("Chat " + chatNo, null, chatPanel,
                   "Does nothing");
-                changeActiveChat((ChatModel)arg);
+//                changeActiveChat((ChatModel)arg);
+            }
+            else{
+                Object[] newArg = (Object[])arg;
+                showConnectionRequestWindow(newArg);
             }
         }
         if(o instanceof EncryptWindow){
@@ -263,16 +248,20 @@ public class View extends Observable implements Observer, ActionListener{
 //            System.out.println("hejehj");
             System.out.println(ind);
         }
+        if(o instanceof StartWindow){
+            Object[] newArg = (Object[])arg;
+            int port = (int)newArg[1];
+            User me = (User)newArg[0];
+            theModel = new Model(port);
+            theModel.addObserver(this);
+            this.addObserver(theModel);
+            
+            this.draw();
+            theModel.setMe(me);  
+        }
         if(o instanceof SettingsWindow){
             User me = (User)arg;
-            theModel.setMe(me);
-            if(!initiated){
-                this.draw();
-                initiated = true;
-            }
-            else{
-            activeChat.setMe(me);
-            }   
+            theModel.setMe(me);  
         }
         if(o instanceof ConnectToServerWindow){
             String[] newArg = (String[])arg;
@@ -311,8 +300,16 @@ public class View extends Observable implements Observer, ActionListener{
             
         }
         else if(e.getSource() == kickButton){
-//            Message theMessage = new Message("Sarah", Color.GREEN, "Hej", new int[] {}, false, false);
-//            showConnectionRequestWindow(theMessage);
+            if(activeChat == null){
+             // do nothing   
+            }
+            else if(activeChat.isHost()){
+                kick();
+            }
+            else{
+                
+            }
+
         }
         else if(e.getSource() == connectToChatBtn){
             connectToServer();

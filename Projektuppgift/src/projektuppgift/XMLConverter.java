@@ -94,7 +94,6 @@ public class XMLConverter {
             for(int i = 0; i < Parts.length; i++){
                 if(i%2 == 0) TextNode.appendChild(doc.createTextNode(Parts[i]));
                 else{
-                    System.out.println("skickar krypterat");
                     String[] EncryptInfo = Owner.encryptString(Parts[i]);   // Here there is a problem if the User has a null socket
                     Element EncryptedNode = doc.createElement("encrypted");
                     System.out.println(Parts[i]);
@@ -191,7 +190,7 @@ public class XMLConverter {
             NodeList EncryptedParts = doc.getElementsByTagName("encrypted");
             int No_EParts = EncryptedParts.getLength();
 
-            String DecryptedText = "";
+            String DecryptedText;
             for(int i = 0; i < No_EParts; i++){
                 ENode = (Element) EncryptedParts.item(i);
                 Cryptotype = ENode.getAttribute("type");
@@ -231,6 +230,7 @@ public class XMLConverter {
         
         // Check if the message contains a keyrequest, if so send an empty message encrypted with both AES and Ceasar
         NodeList KeyRequestTags = doc.getElementsByTagName("keyrequest");
+        System.out.println("antalet funna keyrequest: " + KeyRequestTags.getLength() );
         for(int i = 0; i < KeyRequestTags.getLength(); i++){
             Element Node = (Element) KeyRequestTags.item(i);
             Cryptotype = Node.getAttribute("type");

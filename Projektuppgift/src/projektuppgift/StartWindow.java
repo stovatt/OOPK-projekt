@@ -31,18 +31,18 @@ import java.io.IOException;
  *
  * @author sartov
  */
-public class SettingsWindow extends Observable implements ActionListener{
+public class StartWindow extends Observable implements ActionListener{
     
     
     private JFrame theFrame;
     private JTextField nameField;
-//    private JTextField portField;
+    private JTextField portField;
     private JComboBox<Color> colorDrop;
     private JButton saveBtn;
     
-    public SettingsWindow(){
+    public StartWindow(){
         
-//        System.out.println("Hi from settings window");
+        System.out.println("Hi from settings window");
         
         theFrame = new JFrame("Settings");
         
@@ -53,12 +53,12 @@ public class SettingsWindow extends Observable implements ActionListener{
         namePanel.add(nameFieldLabel);
         namePanel.add(nameField);
         
-//        portField = new JTextField(20);
-//        portField.addActionListener(this);
-//        JLabel portFieldLabel = new JLabel("Port: ");
-//        JPanel portPanel = new JPanel();
-//        portPanel.add(portFieldLabel);
-//        portPanel.add(portField);
+        portField = new JTextField(20);
+        portField.addActionListener(this);
+        JLabel portFieldLabel = new JLabel("Port: ");
+        JPanel portPanel = new JPanel();
+        portPanel.add(portFieldLabel);
+        portPanel.add(portField);
         
         Color[] colors = new Color[] {Color.BLACK, Color.RED, Color.BLUE,
                         Color.GREEN, Color.ORANGE, Color.PINK};
@@ -80,15 +80,17 @@ public class SettingsWindow extends Observable implements ActionListener{
     
     public void actionPerformed(ActionEvent e){
          String name = nameField.getText();
-//         String port = portField.getText();
+         String port = portField.getText();
          Color color = (Color)colorDrop.getSelectedItem();
          
          User me = new User(null);
          me.setName(name);
          me.setColor(color);
          
+         Object[] ret = new Object[] {me, port};
+         
          this.setChanged();
-         notifyObservers(me);
+         notifyObservers(ret);
          theFrame.dispose();
     }
     

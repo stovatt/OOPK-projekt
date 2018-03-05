@@ -112,6 +112,7 @@ public class ConnectionRequestWindow extends Observable implements ActionListene
         
         this.setChanged();
         notifyObservers(ret);
+        requestWindow.dispose();
     }
     
 }

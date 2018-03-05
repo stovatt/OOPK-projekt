@@ -101,12 +101,7 @@ public class ChatModel extends Observable implements Observer{
     
     public void update( Observable o, Object arg ){
         if(o instanceof User && arg instanceof Message){
-            User sender = (User)o;
-            Message Msg = (Message) arg;
-            if(sender.isApproved() || Msg.isConnectionRequest()){
-                this.sendMsg(Msg, sender);
-            }
-            
+            this.updateChatHistory((Message) arg);
         }
     }
     

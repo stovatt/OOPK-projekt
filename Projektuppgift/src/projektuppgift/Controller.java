@@ -30,9 +30,9 @@ public class Controller extends Observable implements Observer, ActionListener{
         return null;
     }
     
-    public void requestConnection(Message FirstMessage){
+    public void requestConnection(Object[] list){
         
-        myView.showConnectionRequestWindow(FirstMessage);
+        myView.showConnectionRequestWindow(list);
     }
     
     public void sendFile( ChatModel activeChat, User recipient, File myFile, String message ){

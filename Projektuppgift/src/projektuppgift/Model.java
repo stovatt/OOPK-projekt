@@ -26,7 +26,7 @@ public class Model extends Observable implements Observer{
     private int port;
     private ChatModel activeChat;
     public ArrayList ChatList;   // public for testing
-    private Controller myController;
+//    private Controller myController;
     
     public Model(int inPort){
         me = new User(null);
@@ -74,7 +74,9 @@ public class Model extends Observable implements Observer{
                 Object[] List = new Object[2];
                 List[0] = Msg;
                 List[1] = (User)o;
-                myController.requestConnection(List);
+                this.setChanged();
+                notifyObservers(List);
+//                myController.requestConnection(List);
             }
         }
         
@@ -123,9 +125,9 @@ public class Model extends Observable implements Observer{
         return port;
     }
  
-    public void setMyController(Controller inController){
-        myController = inController;
-    }
+//    public void setMyController(Controller inController){
+//        myController = inController;
+//    }
     
     public void setMe(User inMe){
         me = inMe;  
