@@ -62,7 +62,9 @@ public class ConnectionRequestWindow extends Observable implements ActionListene
         
         JPanel buttonPanel = new JPanel();
         JButton allowBtn = new JButton("Allow");
+        allowBtn.setActionCommand("Allow");
         JButton denyBtn = new JButton("Deny");
+        denyBtn.setActionCommand("Deny");
         allowBtn.addActionListener(this);
         denyBtn.addActionListener(this);
         buttonPanel.setLayout(new GridLayout(1,0));
@@ -97,8 +99,9 @@ public class ConnectionRequestWindow extends Observable implements ActionListene
     }
     
     public void actionPerformed(ActionEvent e){
-        int chatNo = -1; 
-        if(e.getSource() == allowBtn){
+        int chatNo = -1;
+        
+        if(e.getActionCommand().equals("Allow")){
             chatNo = chatDrop.getSelectedIndex();  
             if(chatNo == 0){
                 chatNo = noChats + 1;
