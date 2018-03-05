@@ -37,9 +37,11 @@ public class InputThread extends Observable implements Runnable{
         while(true){
             try {
                 New = in.readLine();
+                if (New == null || in == null) break;
 //                System.out.println("Fick ett meddelande: "+ New);
             } catch (IOException ex) {
                 Logger.getLogger(InputThread.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("lost connection");
             }
             // if it is a new message, reset tempString
             if(!(New.equals(""))){
