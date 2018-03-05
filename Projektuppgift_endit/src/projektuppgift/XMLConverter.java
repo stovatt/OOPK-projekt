@@ -38,7 +38,7 @@ import java.awt.Color;
 
 public class XMLConverter {
     
-    private final User Owner;
+    private User Owner;
     
     public XMLConverter(User inUser){
         Owner = inUser;
@@ -172,31 +172,46 @@ public class XMLConverter {
         
         // start reading the text
         NodeList TheTextList = doc.getElementsByTagName("text");
-        Element Text = (Element) TheTextList.item(0);
-        
-        // Determine the color of the text
-        String RGB = Text.getAttribute("color");
-        byte[] RGBbyte = Encrypter.hexadecimalToBytes(RGB.substring(1));
-        Color TheColor = new Color((RGBbyte[0]+256)%256 , (RGBbyte[1]+256)%256 , (RGBbyte[2]+256)%256 );
-        
-        // Chop the text into encrypted and not encrypted pieces and decipher.
-        // Then replace encrypted text with decrypted text
-        NodeList EncryptedParts = doc.getElementsByTagName("encrypted");
-        int No_EParts = EncryptedParts.getLength();
-        
+        Color TheColor = null;
         String Cryptotype;
         String CryptoKey;
         Element ENode;
-        for(int i = 0; i < No_EParts; i++){
-            ENode = (Element) EncryptedParts.item(i);
-            Cryptotype = ENode.getAttribute("type");
-            Owner.addAllowedCrypto(Cryptotype);                   // add that that one may send messages encrypted with this kind of crypto
-            CryptoKey = ENode.getAttribute("key");
-            String Encryptedtext = ENode.getTextContent();
-            String DecryptedText = Owner.decryptString(Encryptedtext, Cryptotype, CryptoKey) ;
-            ENode.setTextContent(DecryptedText);
+        String Texten;
+        if(TheTextList.getLength() > 0){
+            Element Text = (Element) TheTextList.item(0);
+
+            // Determine the color of the text
+            String RGB = Text.getAttribute("color");
+            byte[] RGBbyte = Encrypter.hexadecimalToBytes(RGB.substring(1));
+            TheColor = new Color((RGBbyte[0]+256)%256 , (RGBbyte[1]+256)%256 , (RGBbyte[2]+256)%256 );
+
+            // Chop the text into encrypted and not encrypted pieces and decipher.
+            // Then replace encrypted text with decrypted text
+            NodeList EncryptedParts = doc.getElementsByTagName("encrypted");
+            int No_EParts = EncryptedParts.getLength();
+
+            String DecryptedText;
+            for(int i = 0; i < No_EParts; i++){
+                ENode = (Element) EncryptedParts.item(i);
+                Cryptotype = ENode.getAttribute("type");
+                Owner.addAllowedCrypto(Cryptotype);                   // add that that one may send messages encrypted with this kind of crypto
+                CryptoKey = ENode.getAttribute("key");
+                String Encryptedtext = ENode.getTextContent();
+                if(Encryptedtext.equals("")){
+                    DecryptedText = Owner.decryptString(Encryptedtext, Cryptotype, CryptoKey) ;
+                }
+                else{
+                    DecryptedText = "";
+                }
+                ENode.setTextContent(DecryptedText);
+            }
+            
+            Texten = Text.getTextContent();
         }
-        
+        else{
+            TheColor = Color.BLACK;
+            Texten = "";
+        }
         
         // Change attributes that the User might have changed about themslves
         Owner.setName(sender);
@@ -214,11 +229,17 @@ public class XMLConverter {
         
         // Check if the message contains a keyrequest, if so send an empty message encrypted with both AES and Ceasar
         NodeList KeyRequestTags = doc.getElementsByTagName("keyrequest");
+        System.out.println("antalet funna keyrequest: " + KeyRequestTags.getLength() );
         for(int i = 0; i < KeyRequestTags.getLength(); i++){
             Element Node = (Element) KeyRequestTags.item(i);
             Cryptotype = Node.getAttribute("type");
+            Owner.addAllowedCrypto(Cryptotype);
             if(Owner.isAllowedCrypto(Cryptotype)){
-                Owner.sendString("<message sender=\"Trasan\"> <encrypted type="+ Cryptotype +"></encrypted> </message>");
+                String key = null;
+                System.out.println();
+                if(Cryptotype.equals("Ceasar")) key = "01";
+                else if(Cryptotype.equals("AES")) key = "00";
+                Owner.sendString("<message sender=\""+ Owner.getName() + "\"><text color=\"#000000\"><encrypted type=\""+ Cryptotype +"\" key=\""+ key + "\"></encrypted></text></message>");
             }
             
         }
@@ -226,7 +247,7 @@ public class XMLConverter {
         // Create the output in form of an instance of the "Message" class. Disregard what parts were encrypted or not
         
         int[] dummy = {0,0};
-        return new Message(sender, TheColor, Text.getTextContent(), dummy, Disconnect, ConnectionRequest);
+        return new Message(sender, TheColor, Texten, dummy, Disconnect, ConnectionRequest);
     }
     
     
