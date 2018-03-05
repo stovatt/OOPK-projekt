@@ -39,6 +39,7 @@ public class View extends Observable implements Observer, ActionListener{
     private JButton SendMsgBtn;
     private JButton SendAndEncryptBtn;
     private JButton SendFileBtn;
+    private JButton connectToChatBtn;
     // private JButton ChangeOpenkeys;
     private JButton kickButton;
     private User me;
@@ -78,6 +79,7 @@ public class View extends Observable implements Observer, ActionListener{
 //                  "Does nothing");
 
         NewChatBtn = new JButton("Start new chat");
+        connectToChatBtn = new JButton("Connect to server");
         PersonalSettingsBtn = new JButton("Open settings");
         kickButton = new JButton("Kick from chat");
         SendFileBtn = new JButton("Send File");
@@ -89,6 +91,7 @@ public class View extends Observable implements Observer, ActionListener{
         controlButtonPanel.add(PersonalSettingsBtn);
         controlButtonPanel.add(kickButton);
         controlButtonPanel.add(SendFileBtn);
+        controlButtonPanel.add(connectToChatBtn);
         
         JSplitPane controlPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                            historyPanels, controlButtonPanel);
@@ -118,12 +121,13 @@ public class View extends Observable implements Observer, ActionListener{
         
         // Add listeners to buttons
         
-        SendMsgBtn.addActionListener(this) ;
-        SendAndEncryptBtn.addActionListener(this) ;
+        SendMsgBtn.addActionListener(this);
+        SendAndEncryptBtn.addActionListener(this);
         SendFileBtn.addActionListener(this);
-        NewChatBtn.addActionListener(this) ;
-        PersonalSettingsBtn.addActionListener(this) ;
-        kickButton.addActionListener(this) ;
+        NewChatBtn.addActionListener(this);
+        PersonalSettingsBtn.addActionListener(this);
+        kickButton.addActionListener(this);
+        connectToChatBtn.addActionListener(this);
         
         // Put together, pack and set visible
         
@@ -145,6 +149,8 @@ public class View extends Observable implements Observer, ActionListener{
     }
     
     public void connectToServer(){
+        ConnectToServerWindow serverWindow = new ConnectToServerWindow();
+        serverWindow.addObserver(this);
         
     }
     
@@ -266,6 +272,9 @@ public class View extends Observable implements Observer, ActionListener{
         if(o instanceof SettingsWindow){
             me = (User)arg;
         }
+        if(o instanceof ConnectToServerWindow){
+        // kod för att connecta till server med inputat ipadress
+        }
     }
     
     public void notifyObservers(Object arg){
@@ -294,6 +303,9 @@ public class View extends Observable implements Observer, ActionListener{
         }
         else if(e.getSource() == kickButton){
             
+        }
+        else if(e.getSource() == connectToChatBtn){
+            connectToServer();
         }
     }
 }
