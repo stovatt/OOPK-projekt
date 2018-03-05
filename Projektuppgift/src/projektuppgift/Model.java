@@ -45,8 +45,10 @@ public class Model extends Observable implements Observer{
             Proposer.addObserver(this);
         }
         if(o instanceof View){
-            int p = (int)arg;
-            User applicant = (User) o;
+            Object[] newArg = (Object[]) arg;
+            int p = (int)newArg[0];
+            User applicant = (User)newArg[1];
+            System.out.println("hejjj");
                 if(p>-1){
                     applicant.setIsApproved();
                     Object[] Chats = ChatList.toArray();
@@ -68,8 +70,10 @@ public class Model extends Observable implements Observer{
             Message Msg = (Message) arg;
             
             if(Msg.isConnectionRequest()){
-                myController.requestConnection(Msg);
-                //int p = 5;
+                Object[] List = new Object[2];
+                List[0] = Msg;
+                List[1] = (User)o;
+                myController.requestConnection(List);
             }
         }
         
