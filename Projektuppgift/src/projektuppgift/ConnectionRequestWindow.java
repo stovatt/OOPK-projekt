@@ -38,10 +38,13 @@ public class ConnectionRequestWindow extends Observable implements ActionListene
     private JButton allowBtn;
     private JButton denyBtn;
     private int noChats;
+    private Object[] list;
     
-    public ConnectionRequestWindow(Message inMessage, int inNoChats){
+    public ConnectionRequestWindow(Object[] inList, int inNoChats){
         
         noChats = inNoChats;
+        list = inList; 
+        Message inMessage = (Message)list[0];
         
         requestWindow =  new JFrame();
         String name = inMessage.getName();
@@ -94,13 +97,15 @@ public class ConnectionRequestWindow extends Observable implements ActionListene
     }
     
     public void actionPerformed(ActionEvent e){
-        int ret = -1; 
+        int chatNo = -1; 
         if(e.getSource() == allowBtn){
-            ret = chatDrop.getSelectedIndex();  
-            if(ret == 0){
-                ret = noChats + 1;
+            chatNo = chatDrop.getSelectedIndex();  
+            if(chatNo == 0){
+                chatNo = noChats + 1;
             }
         }
+        
+        Object[] ret = new Object[] {chatNo, list[1]};
         
         this.setChanged();
         notifyObservers(ret);
