@@ -53,6 +53,8 @@ public class Encrypter {
     }
     
     public static byte[] hexadecimalToBytes(String Input){
+        
+        // turn a string of hexadecimals to bytes
         int len = Input.length();
         
         if(len % 2 != 0){

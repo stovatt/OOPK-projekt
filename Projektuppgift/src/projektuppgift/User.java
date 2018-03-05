@@ -43,11 +43,15 @@ public class User extends Observable implements Observer{
     private boolean isApproved;
     
     public User(Socket inSocket){
+        
+        // Create a default User
         Name = "?";
         myColour = Color.BLACK;
         isApproved = false;
         allowedCryptos = new ArrayList<>();
         myConverter = new XMLConverter(this);
+        
+        // Try to open a socket and start an encrypter
         try {
             myEncrypter = new Encrypter();
         } catch (NoSuchPaddingException ex) {
@@ -220,6 +224,7 @@ public class User extends Observable implements Observer{
     
     public void update( Observable o, Object arg){
         this.setChanged();
+        // This is how it listens to its socket
         if(o instanceof InputThread){
             if(arg instanceof String){
                 String rawXML = (String) arg;

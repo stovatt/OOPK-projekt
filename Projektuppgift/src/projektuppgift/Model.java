@@ -28,6 +28,7 @@ public class Model extends Observable implements Observer{
     public ArrayList ChatList;   // public for testing
 //    private Controller myController;
     
+    
     public Model(int inPort){
         me = new User(null);
         port = inPort;
@@ -39,11 +40,15 @@ public class Model extends Observable implements Observer{
     }
     
     public void update(Observable o, Object arg){
+        
+        // If you get a socket, listen for requests to join
         if(arg instanceof Socket){
             Socket requestSocket = (Socket) arg;
             User Proposer = new User( (Socket) arg);
             Proposer.addObserver(this);
         }
+        
+        // Handle the User input, yes or no
         if(o instanceof View){
             Object[] newArg = (Object[]) arg;
             int p = (int)newArg[0] - 1;
@@ -67,6 +72,7 @@ public class Model extends Observable implements Observer{
                 }
         }
         
+        // if you get a request to join, ask the user
         if(arg instanceof Message){
             Message Msg = (Message) arg;
             

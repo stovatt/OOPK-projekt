@@ -34,7 +34,11 @@ public class EncryptWindow extends Observable implements ActionListener{
     private boolean finished = false;
     private ArrayList indices;
     
+    
+    
     public EncryptWindow(String msgText) {
+        
+        // initialise all the components for the encryptwindow
         
         indices = new ArrayList();
         encryptFrame = new JFrame();
